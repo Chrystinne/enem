@@ -122,7 +122,33 @@ def plotly_plot(chart_type: str, df):
         import plotly.graph_objs as go
         import numpy as np
 
-        y = list(range(1,28))
+        y = ["AC",
+            "AL",
+            "AM",
+            "AP",
+            "BA",
+            "CE",
+            "DF",
+            "ES",
+            "GO",
+            "MA",
+            "MG",
+            "MS",
+            "MT",
+            "PA",
+            "PB",
+            "PE",
+            "PI",
+            "PR",
+            "RJ",
+            "RN",
+            "RO",
+            "RR",
+            "RS",
+            "SC",
+            "SE",
+            "SP",
+            "TO"]
 
         layout = go.Layout(yaxis=go.layout.YAxis(title='Mathematics Grades per State'),
                         xaxis=go.layout.XAxis(
@@ -137,7 +163,7 @@ def plotly_plot(chart_type: str, df):
                     x=men_bins,
                     orientation='h',
                     name='Men',
-                    hoverinfo='x',
+                    hoverinfo='y',
                     text=men_bins.astype('int'),
                     marker=dict(color='purple')
                     ),
@@ -146,7 +172,7 @@ def plotly_plot(chart_type: str, df):
                     orientation='h',
                     name='Women',
                     text=-1 * women_bins.astype('int'),
-                    hoverinfo='text',
+                    hoverinfo='y',
                     marker=dict(color='seagreen')
                     )]
 
