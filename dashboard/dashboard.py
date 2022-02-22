@@ -95,55 +95,15 @@ def plotly_plot(params, df):
     """ return plotly plots """
 
     if params["type"] == "pyramid":
-        # with st.echo():
 
-        women_bins = np.array([445.38      , 537.72727273, 495.68333333, 508.1375,
-                        492.54566929, 510.18375   , 522.82972973, 505.348     ,
-                        535.37674419, 487.80806452, 534.24932432, 525.645     ,
-                        492.        , 478.7755102 , 512.2       , 515.95119048,
-                        490.11470588, 510.50566038, 527.26477273, 490.77666667,
-                        507.03461538, 513.86666667, 540.308     , 533.82058824,
-                        513.50625   , 529.94112554, 494.79230769])
-
-        men_bins = np.array([756.5       , 470.675     , 485.2       , 483.8       ,
-                    545.27260274, 585.69803922, 530.68666667, 551.4625    ,
-                    570.39130435, 545.121875  , 551.1016129 , 570.38      ,
-                    588.86875   , 525.56190476, 516.23125   , 544.04509804,
-                    551.92631579, 570.77826087, 570.44102564, 543.40769231,
-                    536.41666667, 551.275     , 550.2952381 , 612.4       ,
-                    542.85555556, 579.15494505, 502.14      ])
-
+        filtro = df.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])['NU_NOTA_MT'].mean()
+        women = filtro[filtro.index.get_level_values('TP_SEXO').isin(['F'])]
+        men = filtro[filtro.index.get_level_values('TP_SEXO').isin(['M'])]
+        estados = men.index.get_level_values(0)
+        men_bins = np.array(men)
+        women_bins = np.array(women)
         women_bins *= -1
-
-
-
-        y = ["AC",
-            "AL",
-            "AM",
-            "AP",
-            "BA",
-            "CE",
-            "DF",
-            "ES",
-            "GO",
-            "MA",
-            "MG",
-            "MS",
-            "MT",
-            "PA",
-            "PB",
-            "PE",
-            "PI",
-            "PR",
-            "RJ",
-            "RN",
-            "RO",
-            "RR",
-            "RS",
-            "SC",
-            "SE",
-            "SP",
-            "TO"]
+        y = estados
 
         layout = go.Layout(yaxis=go.layout.YAxis(title='Mathematics Grades per State'),
                         xaxis=go.layout.XAxis(
@@ -171,17 +131,8 @@ def plotly_plot(params, df):
                     marker=dict(color='seagreen')
                     )]
 
-        # fig = px.scatter(
-        #     da
-        #     x="bill_depth_mm",
-        #     y="bill_length_mm",
-        #     color="species",
-        #     title="Bill Depth by Bill Length",
-        # )
-
         return {"data":data_, "layout":layout}
 
-    # return fig
     elif params["type"] == "parallel":
         question = params["question"]
         print(question)
