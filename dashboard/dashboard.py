@@ -96,7 +96,7 @@ def plotly_plot(params, df):
 
     if params["type"] == "pyramid":
 
-        filtro = df.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])['NU_NOTA_MT'].mean()
+        filtro = df.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])['NU_NOTA_MT'].mean().sort_index(ascending=False)
         women = filtro[filtro.index.get_level_values('TP_SEXO').isin(['F'])]
         men = filtro[filtro.index.get_level_values('TP_SEXO').isin(['M'])]
         estados = men.index.get_level_values(0)
