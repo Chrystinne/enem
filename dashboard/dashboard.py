@@ -1,9 +1,14 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 import plotly.express as px
+import chart_studio.plotly as py
+import plotly.graph_objs as go
+
 import altair as alt
 from bokeh.plotting import figure
 from make_plots import (
@@ -28,17 +33,17 @@ st.set_page_config(layout="wide")
 # )  # maybe add 'Boxplot' after fixes
 
 titles_and_graphs = {
-    "1 - Geographical belongingness": None,
-    "2 - Age": None,
-    "3 - Gender": "pyramid",
-    "4 - Marital status": None,
-    "5 - Ethnicity": None,
-    "6.1 - Father's education level": None,
-    "6.2 - Mother's education level": None,
-    "7.1 - Father's profession": None,
-    "7.2 - Mother's profession": None,
-    "8 - Income": None,
-    "9 - Socioeconomic Status": None,
+    "1 - Geographical belongingness": {"type": None, "question": ""},
+    "2 - Age": {"type": None, "question": ""},
+    "3 - Gender": {"type": "pyramid", "question": ""},
+    "4 - Marital status": {"type": None, "question": ""},
+    "5 - Ethnicity": {"type": None, "question": ""},
+    "6.1 - Father's education level": {"type": "parallel", "question": "Q001"},
+    "6.2 - Mother's education level": {"type": "parallel", "question": "Q002"},
+    "7.1 - Father's profession": {"type": None, "question": "Q003"},
+    "7.2 - Mother's profession": {"type": None, "question": "Q004"},
+    "8 - Income": {"type": None, "question": ""},
+    "9 - Socioeconomic Status": {"type": None, "question": ""},
 }
 
 factors = titles_and_graphs.keys()
@@ -46,7 +51,7 @@ factors = titles_and_graphs.keys()
 # Get data
 @st.cache()
 def load_data():
-    return pd.read_csv('../datasets/integrated_data.csv')
+    return pd.read_csv("../datasets/MICRODADOS_ENEM_2018.csv", sep=';', encoding='cp1252', nrows=10000)
 
 df = load_data().copy(deep=True)
 
@@ -60,13 +65,7 @@ with st.container():
 # User choose type
 chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 2)
 
-with st.container():
-    st.subheader(f"Showing:  {chart_type}")
-    st.write("")
-
-two_cols = st.checkbox("2 columns?", True)
-if two_cols:
-    col1, col2 = st.columns(2)
+col1, col2 = st.columns(2)
 
 
 # create plots
@@ -92,13 +91,11 @@ if two_cols:
 #         st.bokeh_chart(plot, use_container_width=True)
 
 
-def plotly_plot(chart_type: str, df):
+def plotly_plot(params, df):
     """ return plotly plots """
 
-    if chart_type == "pyramid":
+    if params["type"] == "pyramid":
         # with st.echo():
-
-        import numpy as np
 
         women_bins = np.array([445.38      , 537.72727273, 495.68333333, 508.1375,
                         492.54566929, 510.18375   , 522.82972973, 505.348     ,
@@ -118,9 +115,7 @@ def plotly_plot(chart_type: str, df):
 
         women_bins *= -1
 
-        # import chart_studio.plotly as py
-        import plotly.graph_objs as go
-        import numpy as np
+
 
         y = ["AC",
             "AL",
@@ -187,9 +182,45 @@ def plotly_plot(chart_type: str, df):
         return {"data":data_, "layout":layout}
 
     # return fig
+    elif params["type"] == "parallel":
+        question = params["question"]
+        print(question)
+        df_par = df[[question, 'NU_NOTA_COMP1', 'NU_NOTA_COMP2', 'NU_NOTA_COMP3', 'NU_NOTA_COMP4', 'NU_NOTA_COMP5']]
+        df_par[question] = df_par[question].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7})
+        dimensions = []
+        for column in df_par.columns:
+            item = dict(range = [df_par[column].min(), df_par[column].max()],
+                        label = column, 
+                        values = df_par[column])
+            dimensions.append(item)
+            
+        fig = go.Figure(data=
+            go.Parcoords(
+                # line_color='yellow',
+                line = dict(color = df_par[question],
+                        colorscale = [[0,'green'],[0.25,'blue'],[0.5,'red'],[1,'gold']],
+                        showscale = True,
+                        cmin = 0,
+                        cmax = 2),
+                dimensions = dimensions
+            )
+        )
+        return fig
 
-plot = plotly_plot(titles_and_graphs[chart_type], df)
-st.plotly_chart(plot, use_container_width=True)
+with st.container():
+    st.subheader(f"Enem Mean Grades by Gender")
+    plot = plotly_plot(titles_and_graphs[chart_type], df)
+    st.plotly_chart(plot, use_container_width=True)
+
+with col1:
+    st.subheader(f"Father's education level")
+    plot = plotly_plot(titles_and_graphs["6.1 - Father's education level"], df)
+    st.plotly_chart(plot, use_container_width=True)
+
+with col2:
+    st.subheader(f"Mother's education level")
+    plot = plotly_plot(titles_and_graphs["6.2 - Mother's education level"], df)
+    st.plotly_chart(plot, use_container_width=True)
 
 
 # output plots
