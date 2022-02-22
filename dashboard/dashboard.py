@@ -1,3 +1,4 @@
+from turtle import position
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -191,16 +192,17 @@ st.title('Heatmaps')
 
 filepath = pd.read_csv("../datasets/heatmap.csv")
 # filepath = "https://raw.githubusercontent.com/giswqs/leafmap/master/examples/data/us_cities.csv"
-m = leafmap.Map(tiles="stamentoner")
+m = leafmap.Map(center=[-16, -50], tiles="stamentoner", zoom_start=5)
 m.add_heatmap(
     filepath,
     latitude="latitude",
     longitude="longitude",
     value="Q006",
     name="Heat map",
-    radius=20,
+    radius=15,
+
 )
-m.to_streamlit(width=700, height=500)
+m.to_streamlit(width=700, height=1000)
 
 # output plots
 # if two_cols:
