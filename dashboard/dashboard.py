@@ -2,23 +2,25 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
 import plotly.express as px
 import chart_studio.plotly as py
 import plotly.graph_objs as go
 
-import altair as alt
-from bokeh.plotting import figure
-from make_plots import (
-    matplotlib_plot,
-    sns_plot,
-    pd_plot,
-    plotly_plot,
-    altair_plot,
-    bokeh_plot,
-)
+import leafmap.foliumap as leafmap
+
+# import altair as alt
+# from bokeh.plotting import figure
+# from make_plots import (
+#     matplotlib_plot,
+#     sns_plot,
+#     pd_plot,
+#     plotly_plot,
+#     altair_plot,
+#     bokeh_plot,
+# )
 
 
 # can only set this once, first thing to set
@@ -174,6 +176,31 @@ for index, question in enumerate(titles_and_graphs[chart_type]["questions"]):
     with cols[index]:
         plot = plotly_plot(titles_and_graphs[chart_type], df)
         st.plotly_chart(plot, use_container_width=True)
+
+st.title('Heatmaps')
+
+# municipios = pd.read_csv("../datasets/municipios.csv")
+
+# df_lat = df[['NU_INSCRICAO', 'NU_ANO', 'CO_MUNICIPIO_RESIDENCIA', 
+#               'NO_MUNICIPIO_RESIDENCIA', 'NU_IDADE', 'TP_SEXO', 'Q006']].merge(municipios[['codigo_ibge', 'nome', 'latitude', 
+#                                                                             'longitude', 'longitude', 'codigo_uf']], 
+#               left_on='CO_MUNICIPIO_RESIDENCIA', right_on='codigo_ibge')
+
+# df_lat['Q006'] = df_lat['Q006'].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7, "I": 8, 'J': 9 , 'K': 10, 'L': 11, 'M': 12,
+#                                     'N': 13, 'O': 14, 'P': 15, 'Q': 16})
+
+filepath = pd.read_csv("../datasets/heatmap.csv")
+# filepath = "https://raw.githubusercontent.com/giswqs/leafmap/master/examples/data/us_cities.csv"
+m = leafmap.Map(tiles="stamentoner")
+m.add_heatmap(
+    filepath,
+    latitude="latitude",
+    longitude="longitude",
+    value="Q006",
+    name="Heat map",
+    radius=20,
+)
+m.to_streamlit(width=700, height=500)
 
 # output plots
 # if two_cols:
