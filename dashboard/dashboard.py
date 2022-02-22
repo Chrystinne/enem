@@ -152,7 +152,7 @@ def plotly_plot(params, df):
                         colorscale = [[0,'green'],[0.25,'blue'],[0.5,'red'],[1,'gold']],
                         showscale = True,
                         cmin = 0,
-                        cmax = 2),
+                        cmax = 7),
                 dimensions = dimensions
             )
         )
