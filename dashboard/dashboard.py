@@ -178,7 +178,7 @@ for index, question in enumerate(titles_and_graphs[chart_type]["questions"]):
         plot = plotly_plot(titles_and_graphs[chart_type], df)
         st.plotly_chart(plot, use_container_width=True)
 
-st.title('Heatmaps')
+st.title('Heatmap by parents income')
 
 # municipios = pd.read_csv("../datasets/municipios.csv")
 
