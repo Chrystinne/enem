@@ -33,17 +33,15 @@ st.set_page_config(layout="wide")
 # )  # maybe add 'Boxplot' after fixes
 
 titles_and_graphs = {
-    "1 - Geographical belongingness": {"type": None, "question": ""},
-    "2 - Age": {"type": None, "question": ""},
-    "3 - Gender": {"type": "pyramid", "question": ""},
-    "4 - Marital status": {"type": None, "question": ""},
-    "5 - Ethnicity": {"type": None, "question": ""},
-    "6.1 - Father's education level": {"type": "parallel", "question": "Q001"},
-    "6.2 - Mother's education level": {"type": "parallel", "question": "Q002"},
-    "7.1 - Father's profession": {"type": None, "question": "Q003"},
-    "7.2 - Mother's profession": {"type": None, "question": "Q004"},
-    "8 - Income": {"type": None, "question": ""},
-    "9 - Socioeconomic Status": {"type": None, "question": ""},
+    "1 - Geographical belongingness": {"type": None, "questions": ""},
+    "2 - Age": {"type": None, "questions": ""},
+    "3 - Gender": {"type": "pyramid", "questions": ""},
+    "4 - Marital status": {"type": None, "questions": ""},
+    "5 - Ethnicity": {"type": None, "questions": ""},
+    "6 - Parents's education level": {"type": "parallel", "questions": ["Q001", "Q002"]},
+    "7 - Parents's profession": {"type": "parallel", "questions": ["Q003", "Q004"]},
+    "8 - Income": {"type": None, "questions": ""},
+    "9 - Socioeconomic Status": {"type": None, "questions": ""},
 }
 
 factors = titles_and_graphs.keys()
@@ -64,9 +62,6 @@ with st.container():
 
 # User choose type
 chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 2)
-
-col1, col2 = st.columns(2)
-
 
 # create plots
 # def show_plot(kind: str):
@@ -134,6 +129,7 @@ def plotly_plot(params, df):
         return {"data":data_, "layout":layout}
 
     elif params["type"] == "parallel":
+        print(params)
         question = params["question"]
         print(question)
         df_par = df[[question, 'NU_NOTA_COMP1', 'NU_NOTA_COMP2', 'NU_NOTA_COMP3', 'NU_NOTA_COMP4', 'NU_NOTA_COMP5']]
@@ -158,21 +154,25 @@ def plotly_plot(params, df):
         )
         return fig
 
-with st.container():
-    st.subheader(f"Enem Mean Grades by Gender")
-    plot = plotly_plot(titles_and_graphs[chart_type], df)
-    st.plotly_chart(plot, use_container_width=True)
 
-with col1:
-    st.subheader(f"Father's education level")
-    plot = plotly_plot(titles_and_graphs["6.1 - Father's education level"], df)
-    st.plotly_chart(plot, use_container_width=True)
 
-with col2:
-    st.subheader(f"Mother's education level")
-    plot = plotly_plot(titles_and_graphs["6.2 - Mother's education level"], df)
-    st.plotly_chart(plot, use_container_width=True)
+num_questions = len(titles_and_graphs[chart_type]["questions"])
 
+st.subheader(   f"{chart_type}")
+
+if num_questions > 0:
+    cols = st.columns(num_questions)
+else:
+    with st.container():
+        plot = plotly_plot(titles_and_graphs[chart_type], df)
+        st.plotly_chart(plot, use_container_width=True)
+
+for index, question in enumerate(titles_and_graphs[chart_type]["questions"]):
+    titles_and_graphs[chart_type]['question'] = question
+    print(titles_and_graphs[chart_type])
+    with cols[index]:
+        plot = plotly_plot(titles_and_graphs[chart_type], df)
+        st.plotly_chart(plot, use_container_width=True)
 
 # output plots
 # if two_cols:
