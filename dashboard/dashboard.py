@@ -134,6 +134,7 @@ def plotly_plot(params, df):
         print(question)
         df_par = df[[question, 'NU_NOTA_COMP1', 'NU_NOTA_COMP2', 'NU_NOTA_COMP3', 'NU_NOTA_COMP4', 'NU_NOTA_COMP5']]
         df_par[question] = df_par[question].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7})
+        cmax = df_par[question].max()
         dimensions = []
         for column in df_par.columns:
             item = dict(range = [df_par[column].min(), df_par[column].max()],
@@ -148,7 +149,7 @@ def plotly_plot(params, df):
                         colorscale = [[0,'green'],[0.25,'blue'],[0.5,'red'],[1,'gold']],
                         showscale = True,
                         cmin = 0,
-                        cmax = 7),
+                        cmax = cmax),
                 dimensions = dimensions
             )
         )
