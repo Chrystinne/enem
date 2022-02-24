@@ -5,7 +5,7 @@ def get_cell_id(id_length=8):
     return uuid.uuid4().hex[:id_length]
 
 # your notebook name/keyword
-nb_name = 'Análises'
+nb_name = 'Enem_Analises'
 notebooks = list(filter(lambda x: nb_name in x, glob("./*.ipynb", recursive=True)))
 
 # iterate over notebooks
