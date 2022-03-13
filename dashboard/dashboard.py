@@ -10,7 +10,7 @@ import plotly.graph_objs as go
 import leafmap.foliumap as leafmap
 
 # can only set this once, first thing to set
-st.set_page_config(layout="wide")
+st.set_page_config()
 
 titles_and_graphs = {
     "1 - Geographical belongingness": {"type": 'geo', "questions": ""},
@@ -166,7 +166,7 @@ for index, question in enumerate(titles_and_graphs[chart_type]["questions"]):
             st.subheader(f"Father")
         else:
             st.subheader(f"Mother")
-        plot = our_plot(titles_and_graphs[chart_type], df)
+        plot = our_plot(titles_and_graphs[chart_type], df, st)
 
 # display data
 with st.container():
