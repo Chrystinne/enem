@@ -4,6 +4,7 @@
 
 Requirements:
 * Anaconda 
+* Git (terminal)
 
 To install the environment (Windows x64) execute the following command:
 ```sh
