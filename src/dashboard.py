@@ -171,8 +171,8 @@ def our_plot(params, ddf_par, st):
             filtro2 = ddf_par.groupby([q2, 'NU_ANO'])['NU_NOTA_LC'].mean().compute().sort_index(ascending=False)
             women = filtro1.index.get_level_values(q1)
             men = filtro2.index.get_level_values(q2)
-            women_bins = np.array(filtro1.values)
-            men_bins = np.array(filtro2.values)
+            women_bins = pd.Series(filtro1.values)
+            men_bins = pd.Series(filtro2.values)
             women_bins *= -1
             y = men
 
@@ -197,19 +197,19 @@ def our_plot(params, ddf_par, st):
                         orientation='h',
                         name='Men',
                         hoverinfo='y',
-                        text=men_bins,
+                        text=men_bins.apply(lambda y: f"{y:.2f}"),
                         marker=dict(color='purple')
                         ),
                     go.Bar(y=y,
                         x=women_bins,
                         orientation='h',
                         name='Women',
-                        text= -1 * women_bins,
+                        text= women_bins.apply(lambda y: f"{(-1 * y):.2f}"),
                         hoverinfo='y',
                         marker=dict(color='seagreen')
                         )]
             fig = go.Figure(data=data_, layout=layout)
-            fig.update_traces(texttemplate="%{x:.2f}")
+            # fig.update_traces(texttemplate="%{x:.2f}")
 
         else:
 
@@ -234,7 +234,7 @@ def our_plot(params, ddf_par, st):
             data_ = [go.Bar(y=y,
                         x=men_bins,
                         orientation='h',
-                        name='Men',
+                        name='Fathers',
                         hoverinfo='y',
                         text=men_bins.astype('int'),
                         marker=dict(color='purple')
@@ -242,7 +242,7 @@ def our_plot(params, ddf_par, st):
                     go.Bar(y=y,
                         x=women_bins,
                         orientation='h',
-                        name='Women',
+                        name='Mothers',
                         text=-1 * women_bins.astype('int'),
                         hoverinfo='y',
                         marker=dict(color='seagreen')
