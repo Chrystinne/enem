@@ -3,21 +3,16 @@ import dask.dataframe as dd
 import json
 
 
-def load_data_year(year, cols, test=True):
-    if test:
-        file = f'../datasets/microdados_anos_test/MICRODADOS_ENEM_{year}.csv'
-    else:
-        file = f'../datasets/microdados_anos/MICRODADOS_ENEM_{year}.csv'
-        # file = f'../../../microdados_anos/MICRODADOS_ENEM_{year}.csv'
-    print(f'File: {file}')
+def load_data_year(year, cols):
+    file = f'../../../microdados_anos/MICRODADOS_ENEM_{year}.csv'
 
     try:
-        df = dd.read_csv(file, encoding='cp1252', sep=';', usecols=cols, assume_missing=True)#, dtype=dtype)
+        df = dd.read_csv(file, encoding='cp1252', sep=';', usecols=cols, assume_missing=True)
     except:
         try:
-            df = dd.read_csv(file, encoding='cp1252', usecols=cols, assume_missing=True)#, dtype=dtype)
+            df = dd.read_csv(file, encoding='cp1252', usecols=cols, assume_missing=True)
         except:
-            df = dd.read_csv(file, encoding='cp1252', sep=';', assume_missing=True)#, dtype=dtype)
+            df = dd.read_csv(file, encoding='cp1252', sep=';', assume_missing=True)
             df = df.rename(columns={'NO_MUNICIPIO_PROVA': 'NO_MUNICIPIO_RESIDENCIA', 
                                         'SG_UF_PROVA': 'SG_UF_RESIDENCIA', 'TP_FAIXA_ETARIA': 'NU_IDADE'})[cols]
     
@@ -32,11 +27,11 @@ def load_parquets(path, n_parts=None):
         
     return df
 
-def union_datas(years, cols, test=True):
-    df = load_data_year(years[0], cols, test=test)
+def union_datas(years, cols):
+    df = load_data_year(years[0], cols)
     
     for y in years[1:]:
-        df = dd.concat([df, load_data_year(y, cols, test=test)])
+        df = dd.concat([df, load_data_year(y, cols)])
     return df
 
 def info_sum_isna(df):
