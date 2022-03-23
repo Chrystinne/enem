@@ -18,7 +18,7 @@ st.set_page_config(layout="wide")
 titles_and_graphs = {
     "Geographical belongingness": {"type": 'geo', "questions": ""},
     "Age": {"type": None, "questions": "", "dimension": "age"},
-    "Gender": {"type": "pyramid", "questions": ""},
+    "Gender": {"type": "pyramid"},
     "Parents' education level": {"type": "pyramid", "questions": ["Q001", "Q002"]},
     "Marital status": {"type": None, "questions": ""},
     "Ethnicity": {"type": None, "questions": ""},
@@ -180,14 +180,12 @@ def our_plot(params, ddf_par, st):
             print(women_bins)
 
             layout = go.Layout(yaxis=go.layout.YAxis(title='Languages and Codes Grades per Parents\' Education Level',
-                                                    #  tickformat='.2f'
                                                      ),
                             xaxis=go.layout.XAxis(
                                 range=[-700, 700],
                                 tickvals=[-700, -350, 0, 350, 700],
                                 ticktext=[700, 350, 0, 350, 700],
                                 title='Mean Grade',
-                                # tickformat='.2f'
                                 ),
                             barmode='overlay',
                             bargap=0.1, width=50, height=800)
@@ -208,8 +206,6 @@ def our_plot(params, ddf_par, st):
                         hoverinfo='y',
                         marker=dict(color='seagreen')
                         )]
-            fig = go.Figure(data=data_, layout=layout)
-            # fig.update_traces(texttemplate="%{x:.2f}")
 
         else:
 
@@ -247,14 +243,8 @@ def our_plot(params, ddf_par, st):
                         hoverinfo='y',
                         marker=dict(color='seagreen')
                         )]
-
+        fig = go.Figure(data=data_, layout=layout)
         st.plotly_chart(fig, use_container_width=True)
-        # display data
-        # with st.container():
-        #     show_data = st.checkbox("See the raw data?")
-
-        #     if show_data:
-        #         filtro
 
     elif params["type"] == "parallel":
         print(params)
