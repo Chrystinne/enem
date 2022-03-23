@@ -24,6 +24,7 @@ titles_and_graphs = {
     "Ethnicity": {"type": None, "questions": ""},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
+    "Parents' professions": {"type": "pyramid", "questions": ["Q003", "Q004"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
     "Income": {"type": 'cloro', "questions": ""},
@@ -250,15 +251,15 @@ def our_plot(params, ddf_par, st):
         print(params)
         columns = params["questions"]
         questions = params["questions"].copy()
-        columns.extend(['NU_NOTA_CN', 'NU_NOTA_CH', 'NU_NOTA_LC', 'NU_NOTA_MT', 'NU_NOTA_REDACAO', 'NU_NOTA_SUM', 'NU_ANO'])
+        columns.extend(['NU_NOTA_CN', 'NU_NOTA_CH', 'NU_NOTA_LC', 'NU_NOTA_MT', 'NU_NOTA_REDACAO', 'NU_ANO'])
         print(f'Colunas: {columns}')
-        # ddf_par =  dd.read_parquet(f'../datasets/integrated_datas_{year}{test}.parquet.gzip', ignore_metadata_file=True, columns=columns)
-        # ddf_par =  pd.read_parquet(f'../datasets/integrated_top_grade_data{test}.parquet.gzip', columns=columns)
-        ddf_par =  pd.read_parquet(f'../datasets/integrated_10000_top_grade_data.parquet.gzip', columns=columns)
-        ddf_par = ddf_par[ddf_par.NU_ANO == year]
+        ddf_par =  dd.read_parquet(f'../datasets/integrated_datas_{year}{test}.parquet.gzip', ignore_metadata_file=True, columns=columns)
+        #ddf_par =  pd.read_parquet(f'../datasets/integrated_top_grade_data{test}.parquet.gzip', columns=columns)
+        #ddf_par =  pd.read_parquet(f'../datasets/integrated_10000_top_grade_data.parquet.gzip', columns=columns)
+        # ddf_par = ddf_par[ddf_par.NU_ANO == year]
         print(f"Registros: {len(ddf_par)}")
 
-        # ddf_par = ddf_par.compute()
+        ddf_par = ddf_par.compute()
         # campos das notas da redação   
         # df_par = ddf[[question, 'NU_NOTA_COMP1', 'NU_NOTA_COMP2', 'NU_NOTA_COMP3', 'NU_NOTA_COMP4', 'NU_NOTA_COMP5']].copy(deep=True).iloc[:1000]
 
@@ -267,7 +268,6 @@ def our_plot(params, ddf_par, st):
                             'NU_NOTA_LC' : 'Linguagens e Códigos',
                             'NU_NOTA_MT' : 'Matemática',
                             'NU_NOTA_REDACAO' : 'Redação',
-                            'NU_NOTA_SUM' : 'Soma das Notas',
 
                             'NU_NOTA_COMP1': 'Formal Writting', 
                             'NU_NOTA_COMP2': 'Topic Understanding', 
