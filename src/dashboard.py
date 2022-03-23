@@ -24,7 +24,7 @@ titles_and_graphs = {
     "Ethnicity": {"type": None, "questions": ""},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
-    "Parents' professions": {"type": "pyramid", "questions": ["Q003", "Q004"]},
+    "Parents' profession": {"type": "pyramid", "questions": ["Q003", "Q004"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
     "Income": {"type": 'cloro', "questions": ""},
@@ -170,17 +170,21 @@ def our_plot(params, ddf_par, st):
             q2 = params['questions'][0]
             filtro1 = ddf_par.groupby([q1, 'NU_ANO'])['NU_NOTA_LC'].mean().compute().sort_index(ascending=False)
             filtro2 = ddf_par.groupby([q2, 'NU_ANO'])['NU_NOTA_LC'].mean().compute().sort_index(ascending=False)
-            women = filtro1.index.get_level_values(q1)
-            men = filtro2.index.get_level_values(q2)
-            women_bins = pd.Series(filtro1.values)
-            men_bins = pd.Series(filtro2.values)
+            women = filtro1.index.get_level_values(q1)[1:]
+            men = filtro2.index.get_level_values(q2)[1:]
+            women_bins = pd.Series(filtro1.values)[1:]
+            men_bins = pd.Series(filtro2.values)[1:]
             women_bins *= -1
             y = men
 
             print(men_bins)
             print(women_bins)
-
-            layout = go.Layout(yaxis=go.layout.YAxis(title='Languages and Codes Grades per Parents\' Education Level',
+            
+            if('Q001' in params['questions']):
+                title = 'Education Level'
+            else:
+                title = 'Profession'
+            layout = go.Layout(yaxis=go.layout.YAxis(title=f'Languages and Codes Grades per Parents\' {title}',
                                                      ),
                             xaxis=go.layout.XAxis(
                                 range=[-700, 700],
