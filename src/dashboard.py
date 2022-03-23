@@ -190,8 +190,7 @@ def our_plot(params, ddf_par, st):
                                 range=[-700, 700],
                                 tickvals=[-700, -350, 0, 350, 700],
                                 ticktext=[700, 350, 0, 350, 700],
-                                title='Mean Grade',
-                                ),
+                                title='Mean Grade'),
                             barmode='overlay',
                             bargap=0.1, width=50, height=800)
 
@@ -249,6 +248,7 @@ def our_plot(params, ddf_par, st):
                         marker=dict(color='seagreen')
                         )]
         fig = go.Figure(data=data_, layout=layout)
+        fig.update_layout(font_size=20)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
