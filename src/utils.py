@@ -82,8 +82,8 @@ def add_ses_points(x):
     
     return x
 
-def add_null_values(x, df_groups):
-    df_groups = df_final.groupby(['TP_ESCOLA', 'TP_ST_CONCLUSAO', 'SG_UF_RESIDENCIA']).mean()
+def add_null_values(x, df):
+    df_groups = df.groupby(['TP_ESCOLA', 'TP_ST_CONCLUSAO', 'SG_UF_RESIDENCIA']).mean()
     df_groups = df_groups.rename_axis(['TP_ESCOLA', 'TP_ST_CONCLUSAO', 'SG_UF_RESIDENCIA']).reset_index()
     
     if(sum(pd.isna(x)) > 0):

@@ -193,7 +193,7 @@ def our_plot(params, ddf_par, st):
             data_ = [go.Bar(y=y,
                         x=men_bins,
                         orientation='h',
-                        name='Men',
+                        name='Fathers',
                         hoverinfo='y',
                         text=men_bins.apply(lambda y: f"{y:.2f}"),
                         marker=dict(color='purple')
@@ -201,7 +201,7 @@ def our_plot(params, ddf_par, st):
                     go.Bar(y=y,
                         x=women_bins,
                         orientation='h',
-                        name='Women',
+                        name='Mothers',
                         text= women_bins.apply(lambda y: f"{(-1 * y):.2f}"),
                         hoverinfo='y',
                         marker=dict(color='seagreen')
@@ -230,7 +230,7 @@ def our_plot(params, ddf_par, st):
             data_ = [go.Bar(y=y,
                         x=men_bins,
                         orientation='h',
-                        name='Fathers',
+                        name='Men',
                         hoverinfo='y',
                         text=men_bins.astype('int'),
                         marker=dict(color='purple')
@@ -238,7 +238,7 @@ def our_plot(params, ddf_par, st):
                     go.Bar(y=y,
                         x=women_bins,
                         orientation='h',
-                        name='Mothers',
+                        name='Women',
                         text=-1 * women_bins.astype('int'),
                         hoverinfo='y',
                         marker=dict(color='seagreen')
