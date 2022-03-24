@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import dask.dataframe as dd
 import numpy as np
+from math import floor
 
 import plotly.express as px
 import chart_studio.plotly as py
@@ -18,32 +19,43 @@ st.set_page_config(layout="wide")
 titles_and_graphs = {
     "Geographical belongingness": {"type": 'geo', "questions": ""},
     "Age": {"type": None, "questions": "", "dimension": "age"},
-    "Gender": {"type": "pyramid"},
-    "Parents' education level": {"type": "pyramid", "questions": ["Q001", "Q002"]},
+    "Gender": {"title": "Gender", "type": "pyramid"},
+    "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
+    "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
     "Marital status": {"type": None, "questions": ""},
     "Ethnicity": {"type": None, "questions": ""},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
-    "Parents' profession": {"type": "pyramid", "questions": ["Q003", "Q004"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
     "Income": {"type": 'cloro', "questions": ""},
     "Socioeconomic Status": {"type": None, "questions": ""},
 }
 
+grades_and_columns = {"Mathematics": "NU_NOTA_MT", 
+                     "Languages and Codes": "NU_NOTA_LC", 
+                     "Human Sciences": "NU_NOTA_CH", 
+                     "Nature Sciences": "NU_NOTA_CN",
+                     "Essay": "NU_NOTA_REDACAO"}
+
+columns_and_grades = {item[1]: item[0] for item in grades_and_columns.items()}                     
+
 factors = titles_and_graphs.keys()
+grades = grades_and_columns.keys()
 
 # Top text area
 with st.container():
     st.title("Education Manager's Guide 📊")
 
 # column_1, column_2, column_3 = st.columns(3)
-(column_1, column_2), test_data = st.columns(2), False
+(column_1, column_2, column_3), test_data = st.columns(3), False
 with column_1:
     chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 2)
 with column_2:
     years = list(range(2015,2021))
     year = st.selectbox("Year", years, len(years)-1)
+with column_3:
+    grade = st.selectbox("Grade", grades, len(grades)-1)
 # with column_3:
 #     test_data = st.checkbox('Test Data', True)
 # with column_3:
@@ -168,31 +180,34 @@ def our_plot(params, ddf_par, st):
         if 'questions' in params:
             q1 = params['questions'][1]
             q2 = params['questions'][0]
-            filtro1 = ddf_par.groupby([q1, 'NU_ANO'])['NU_NOTA_LC'].mean().compute().sort_index(ascending=False)
-            filtro2 = ddf_par.groupby([q2, 'NU_ANO'])['NU_NOTA_LC'].mean().compute().sort_index(ascending=False)
-            women = filtro1.index.get_level_values(q1)[1:]
-            men = filtro2.index.get_level_values(q2)[1:]
-            women_bins = pd.Series(filtro1.values)[1:]
-            men_bins = pd.Series(filtro2.values)[1:]
-            women_bins *= -1
+            filtro1 = ddf_par.groupby([q1, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
+            filtro2 = ddf_par.groupby([q2, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
+            women = filtro1.index.get_level_values(q1)
+            men = filtro2.index.get_level_values(q2)
+            women_bins = pd.Series(filtro1.values)
+            men_bins = pd.Series(filtro2.values)
             y = men
+
+            max_men_value = floor(men_bins.max())
+            min_men_value = floor(men_bins.min())
+            max_women_value = floor(women_bins.max())
+            min_women_value = floor(women_bins.min())
+            women_bins *= -1
 
             print(men_bins)
             print(women_bins)
-            
-            if('Q001' in params['questions']):
-                title = 'Education Level'
-            else:
-                title = 'Profession'
-            layout = go.Layout(yaxis=go.layout.YAxis(title=f'Languages and Codes Grades per Parents\' {title}',
+
+            layout = go.Layout(yaxis=go.layout.YAxis(title=params['title'],
                                                      ),
                             xaxis=go.layout.XAxis(
-                                range=[-700, 700],
-                                tickvals=[-700, -350, 0, 350, 700],
-                                ticktext=[700, 350, 0, 350, 700],
-                                title='Mean Grade'),
+                                range=[-710, 710],
+                                tickvals=[-1*max_women_value, -1*min_women_value, 0, min_men_value, max_men_value],
+                                ticktext=[max_women_value, min_women_value, 0, min_men_value, max_men_value],
+                                tickwidth=4,
+                                title=f'Mean {grade} Grades',
+                                ),
                             barmode='overlay',
-                            bargap=0.1, width=50, height=800)
+                            bargap=0.1, width=50, height=400)
 
             data_ = [go.Bar(y=y,
                         x=men_bins,
@@ -219,15 +234,20 @@ def our_plot(params, ddf_par, st):
             estados = men.index.get_level_values(0)
             men_bins = np.array(men)
             women_bins = np.array(women)
-            women_bins *= -1
             y = estados
 
-            layout = go.Layout(yaxis=go.layout.YAxis(title='Mathematics Grades per State'),
+            max_men_value = floor(men_bins.max())
+            min_men_value = floor(men_bins.min())
+            max_women_value = floor(women_bins.max())
+            min_women_value = floor(women_bins.min())
+            women_bins *= -1
+
+            layout = go.Layout(yaxis=go.layout.YAxis(title='State'),
                             xaxis=go.layout.XAxis(
-                                range=[-1000, 1000],
-                                tickvals=[-1000, -700, -300, 0, 300, 700, 1000],
-                                ticktext=[1000, 700, 300, 0, 300, 700, 1000],
-                                title='Mean Grade'),
+                                range=[-710, 710],
+                                tickvals=[-1*max_women_value, -1*min_women_value, 0, min_men_value, max_men_value],
+                                ticktext=[max_women_value, min_women_value, 0, min_men_value, max_men_value],
+                                title='Mean Mathematics Grades'),
                             barmode='overlay',
                             bargap=0.1, width=50, height=800)
 
@@ -248,22 +268,22 @@ def our_plot(params, ddf_par, st):
                         marker=dict(color='seagreen')
                         )]
         fig = go.Figure(data=data_, layout=layout)
-        fig.update_layout(font_size=20)
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
         print(params)
         columns = params["questions"]
         questions = params["questions"].copy()
-        columns.extend(['NU_NOTA_CN', 'NU_NOTA_CH', 'NU_NOTA_LC', 'NU_NOTA_MT', 'NU_NOTA_REDACAO', 'NU_ANO'])
+        columns.extend(['NU_NOTA_CN', 'NU_NOTA_CH', 'NU_NOTA_LC', 'NU_NOTA_MT', 'NU_NOTA_REDACAO', 'NU_NOTA_SUM', 'NU_ANO'])
         print(f'Colunas: {columns}')
-        ddf_par =  dd.read_parquet(f'../datasets/integrated_datas_{year}{test}.parquet.gzip', ignore_metadata_file=True, columns=columns)
-        #ddf_par =  pd.read_parquet(f'../datasets/integrated_top_grade_data{test}.parquet.gzip', columns=columns)
-        #ddf_par =  pd.read_parquet(f'../datasets/integrated_10000_top_grade_data.parquet.gzip', columns=columns)
-        # ddf_par = ddf_par[ddf_par.NU_ANO == year]
+        # ddf_par =  dd.read_parquet(f'../datasets/integrated_datas_{year}{test}.parquet.gzip', ignore_metadata_file=True, columns=columns)
+        # ddf_par =  pd.read_parquet(f'../datasets/integrated_top_grade_data{test}.parquet.gzip', columns=columns)
+        ddf_par =  pd.read_parquet(f'../datasets/integrated_10000_top_grade_data.parquet.gzip', columns=columns)
+        ddf_par = ddf_par[ddf_par.NU_ANO == year]
         print(f"Registros: {len(ddf_par)}")
 
-        ddf_par = ddf_par.compute()
+        # ddf_par = ddf_par.compute()
         # campos das notas da redação   
         # df_par = ddf[[question, 'NU_NOTA_COMP1', 'NU_NOTA_COMP2', 'NU_NOTA_COMP3', 'NU_NOTA_COMP4', 'NU_NOTA_COMP5']].copy(deep=True).iloc[:1000]
 
@@ -272,6 +292,7 @@ def our_plot(params, ddf_par, st):
                             'NU_NOTA_LC' : 'Linguagens e Códigos',
                             'NU_NOTA_MT' : 'Matemática',
                             'NU_NOTA_REDACAO' : 'Redação',
+                            'NU_NOTA_SUM' : 'Soma das Notas',
 
                             'NU_NOTA_COMP1': 'Formal Writting', 
                             'NU_NOTA_COMP2': 'Topic Understanding', 
