@@ -182,10 +182,11 @@ def our_plot(params, ddf_par, st):
             q2 = params['questions'][0]
             filtro1 = ddf_par.groupby([q1, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
             filtro2 = ddf_par.groupby([q2, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
-            women = filtro1.index.get_level_values(q1)
-            men = filtro2.index.get_level_values(q2)
-            women_bins = pd.Series(filtro1.values)
-            men_bins = pd.Series(filtro2.values)
+            women = filtro1.index.get_level_values(q1)[1:]
+            men = filtro2.index.get_level_values(q2)[1:]
+            women_bins = pd.Series(filtro1.values)[1:]
+            men_bins = pd.Series(filtro2.values)[1:]
+            
             y = men
 
             max_men_value = floor(men_bins.max())
