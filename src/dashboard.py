@@ -19,7 +19,7 @@ st.set_page_config(layout="wide")
 titles_and_graphs = {
     "Geographical belongingness": {"type": 'geo', "questions": ""},
     "Age": {"type": None, "questions": "", "dimension": "age"},
-    "Gender": {"title": "Gender", "type": "pyramid"},
+    "Gender": {"title": "Gender", "type": "bars"},
     "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
     "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
     "Marital status": {"type": None, "questions": ""},
@@ -226,53 +226,64 @@ def our_plot(params, ddf_par, st):
                         hoverinfo='y',
                         marker=dict(color='seagreen')
                         )]
+    
+    elif params["type"] == "bars":
 
-        else:
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])['NU_NOTA_MT'].mean().reset_index().compute()
+        
+        women = filtro[filtro.TP_SEXO == 'F'].NU_NOTA_MT
+        men = filtro[filtro.TP_SEXO == 'M'].NU_NOTA_MT
+        dif = (men.values - women.values)
+        estados = filtro.iloc[men.index]['SG_UF_RESIDENCIA'].values
 
-            filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO', 'NU_ANO'])['NU_NOTA_MT'].mean().compute().sort_index(ascending=False)
-            women = filtro[filtro.index.get_level_values('TP_SEXO').isin(['F'])]
-            men = filtro[filtro.index.get_level_values('TP_SEXO').isin(['M'])]
-            estados = men.index.get_level_values(0)
-            men_bins = np.array(men)
-            women_bins = np.array(women)
-            y = estados
+        filtro = pd.DataFrame({'men': men.values, 'women': women.values, 'estados': estados, 'dif': dif}).sort_values('dif').reset_index(drop=True)
+        print(filtro)
 
-            max_men_value = floor(men_bins.max())
-            min_men_value = floor(men_bins.min())
-            max_women_value = floor(women_bins.max())
-            min_women_value = floor(women_bins.min())
-            women_bins *= -1
+        max_men_value = floor(men.max())
+        min_men_value = floor(men.min())
+        max_women_value = floor(women.max())
+        min_women_value = floor(women.min())
 
-            layout = go.Layout(yaxis=go.layout.YAxis(title='State'),
-                            xaxis=go.layout.XAxis(
-                                range=[-710, 710],
-                                tickvals=[-1*max_women_value, -1*min_women_value, 0, min_men_value, max_men_value],
-                                ticktext=[max_women_value, min_women_value, 0, min_men_value, max_men_value],
-                                title='Mean Mathematics Grades'),
-                            barmode='overlay',
-                            bargap=0.1, width=50, height=800)
+        layout = go.Layout(yaxis=go.layout.YAxis(title='Mean Mathematics Grades',
+                                                 tickvals=[min_women_value, max_women_value, 0, min_men_value, max_men_value],
+                                                 ticktext=[min_women_value, max_women_value, 0, min_men_value, max_men_value]),
+                           xaxis=go.layout.XAxis(title="States"),
+                        #    barmode='overlay',
+                           bargap=0.1, width=100, height=430)
 
-            data_ = [go.Bar(y=y,
-                        x=men_bins,
-                        orientation='h',
-                        name='Men',
-                        hoverinfo='y',
-                        text=men_bins.astype('int'),
-                        marker=dict(color='purple')
-                        ),
-                    go.Bar(y=y,
-                        x=women_bins,
-                        orientation='h',
-                        name='Women',
-                        text=-1 * women_bins.astype('int'),
-                        hoverinfo='y',
-                        marker=dict(color='seagreen')
-                        )]
+        data_ = [go.Bar(y=filtro.men,
+                    x=filtro.estados,
+                    name='Men',
+                    hoverinfo='x',
+                    text=filtro.men.apply(lambda y: f"{y:.2f}"),
+                    marker=dict(color='purple'),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.women,
+                    x=filtro.estados,
+                    name='Women',
+                    text=filtro.women.apply(lambda y: f"{y:.2f}"),
+                    hoverinfo='x',
+                    marker=dict(color='seagreen'),
+                    textposition='outside'
+                    ),
+                go.Scatter(x=filtro.estados, 
+                           y=filtro.dif, 
+                           hoverinfo='y',
+                           name='Difference',
+                           textfont=dict(color='white'),
+                           text=filtro.dif.apply(lambda y: f"{y:.2f}"), 
+                           marker=dict(color='red'),
+                           mode='lines+markers+text',
+                           textposition='top center')
+                ]
         fig = go.Figure(data=data_, layout=layout)
+        fig.update_layout(barmode='group')
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
+        
         print(params)
         columns = params["questions"]
         questions = params["questions"].copy()
