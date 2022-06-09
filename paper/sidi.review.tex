@@ -35,7 +35,7 @@
 
 \sloppy
 
-\title{EduVizBR: A decision support system for \\ Brazilian students' performance analysis} 
+\title{EduVizBR: A decision support system for \\ Brazilian high school students' performance analysis} 
 
 \author{Chrystinne Fernandes\inst{1}, Diénert Vieira\inst{1}, Tassiane Barros\inst{1}, \\ Aian Shay\inst{1}, 
 Nicksson Freitas\inst{2} and Tiago Vinuto\inst{2}}
@@ -58,23 +58,19 @@ Nicksson Freitas\inst{2} and Tiago Vinuto\inst{2}}
 
 \begin{abstract} 
 % Refazer no final% 
-Due to the explosive growth of educational data resulting from technological advances, Educational managers tend to be overwhelmed by the massive volume of data available during their decision-making process. 
-As public datasets become available to be explored, more assistant tools are demanded to process, mine, and filter strategic knowledge into massive databases. Therefore, decision support tools are essential to help managers focus on the relevant subjects and gain the necessary knowledge to make faster and more reasonable decisions. 
-In this paper, we present the EduVizBR, a decision support tool designed to assist Educational managers in analyzing the Brazilian students' performance at school. All the analyses are performed through the use of a robust dashboard containing selectable filters to interactively and quickly access the desired information. The EduVizBr allows managers to explore a massive volume of integrated educational data by narrowing their analyses according to: the most relevant impact factors presented in the literature, year of interest, and school subjects. We validated our tool through the conduction of a case study to analyse the school performance of high school students in the Brazilian national exam (ENEM). In this scenario, the EduVizBR was able to provide interesting insights about how gender impacts students' grades in all Brazilian states, and the influence of parents' educational attainment and parents' professions on their children's grades. Finally, we also analysed the trend for the students' performance over the last six years considering the mentioned factors.  
-
+Due to the explosive growth of educational data resulting from technological advances, Educational managers tend to be overwhelmed by the massive volume of data available during their decision-making process. As public datasets become available to be explored, more assistant tools are demanded to process, mine, and filter strategic knowledge into massive databases. %Therefore, decision support tools are essential to can help managers focus on the relevant subjects and gain the necessary knowledge to make faster and more reasonable decisions. 
+In this paper, we present the EduVizBR, a decision support tool designed to assist Educational managers in analyzing the Brazilian high school students' performance  at school. %All the analyses are performed through the use of a robust dashboard containing selectable filters to interactively and quickly access the desired information.
+ The EduVizBr allows managers to explore a massive volume of integrated educational data by narrowing their analyses according to: the most relevant impact factors presented in the literature, year of interest, and school subjects. We validated our tool through the conduction of a case study to analyse the school performance of high school students in the Brazilian national exam (ENEM). In this scenario, the EduVizBR was able to provide interesting insights about how gender impacts students' grades in all Brazilian states, and the influence of parents' educational attainment and parents' professions on their children's grades. Finally, we also analysed the trend for the students' performance over the last six years considering the mentioned factors.  
 \end{abstract}
 
 
 \section{Introduction} 
 %Contexto/Problema%
 
-
 The recent technological advances and easy access to the Internet contribute to the explosive growth of educational data. As public datasets become available to be explored, more assistant tools are demanded to process, mine, and filter strategic knowledge into massive databases  \cite{Terrin2014}. Educational Data Mining (EDM) is a research area that addresses different methods and tools that can be utilized for exploring the increasingly large-scale data that come from educational scenarios to better understand students and their context \cite{Romero2020}. Additionally, EDM has an emerging field named Educational Process Mining (EPM) aiming to make unexpressed knowledge explicit and to facilitate better understanding of the educational process \cite{Bogarn2017}.
 
 %Problem/Proposta% 
-Educational managers such as managers, coordinators, assistants, and professors
-tend to be overwhelmed by the massive volume of data available during their decision-making process. Moreover, raw data does not provide the information needed to make accurate and agile decisions. Therefore, Decision Support Systems (DSS) are essential to help managers focus on the relevant subjects and gain the necessary knowledge to make faster and more reasonable decisions \cite{Velasco2020,RoqueeFaria2019}. In this process, consistent methods and approaches are required to
-treat, group, and prepare all data in a single data warehouse.
+Educational managers such as managers, coordinators, assistants, and professors tend to be overwhelmed by the massive volume of data available during their decision-making process. Moreover, raw data does not provide the information needed to make accurate and agile decisions. Therefore, Decision Support Systems (DSS) are essential to help managers focus on the relevant subjects and gain the necessary knowledge to make faster and more reasonable decisions \cite{Velasco2020,RoqueeFaria2019}. In this process, consistent methods and approaches are required to treat, group, and prepare all data in a single data warehouse.
 
 %[RELACIONADOS E AS DESVANTAGENS]
 Finding a set of factors that influence students' performance and that can be applied to a specific education scenario of investigation is a difficult task. This is mainly because the set of factors presented in the literature are too subjective to be measured through the available datasets in the field of education, such as: personal motivation, parents' expectations and involvement, home affective environment, discipline, and structure for learning. 
@@ -93,11 +89,11 @@ The main goal of this work is the conception of a decision support tool designed
 As the main contributions of our research project, we highlight: 
 
 \begin{enumerate}
-    \item The investigation and findings related to the factors that affect students’ performance in Brazil using six real datasets. We understand that other researchers can benefit from these results validating these factors with educational data from anywhere in the world;
-    \item  A new pipeline to process, integrate and group different public datasets in Brazil, in our case, ENEM, FUNDEB and PNAE, including data preprocessing and many descriptive analyses available in this paper's repository; 
+    \item The investigation and findings related to the factors that affect high school students’ performance in Brazil using six real datasets. We understand that other researchers can benefit from these results validating these factors with educational data from anywhere in the world;
+    \item  A new pipeline to process, integrate and group different public datasets in Brazil, in our case, ENEM, FUNDEB and PNAE, including data preprocessing and many descriptive analyses available in this paper's repository \footnote{Repository available at: \url{https://github.com/Chrystinne/enem}}; 
     \item The design and development of a decision support system for Educational Managers to make faster and more strategic decisions using interactive visualizations;
     \item The conduction of a use case comprising the exploitation and analysis of ENEM's datasets to validate our decision support tool.
-    \item The EduVizBR assisted us in answering important research questions about Brazilian students' performance.
+    %\item The EduVizBR assisted us in answering important research questions about Brazilian students' performance.
     
 \end{enumerate}
 
@@ -120,27 +116,24 @@ In \cite{Christenson_1992}, the authors present the following factors that influ
 
 Another study \cite{Farooq2012FACTORSAS} was conducted to examine different factors influencing the academic performance of secondary school students in a metropolitan city of Pakistan. A survey was conducted by using a questionnaire for gathering information about different factors relating to academic performance of students. The respondents of the survey for this study were 600 10\textsuperscript{th} grade students (300 male and 300 female). The academic performance was measured by the result of their 9\textsuperscript{th} grade annual examination. Standard t-test and ANOVA were applied to investigate the effect of different factors on students’ achievement. The factors brought by this work were: i) age, ii) gender, iii) geographical belongingness, iv) ethnicity, v) marital status, vi) language, vii) parents’ educational level, viii) parental profession, ix) income, x) socioeconomic status (SES), and xi) religious affiliations. The findings of this study are the following: 
 
-\begin{itemize}
-    \item[\textbf{1.}] Socioeconomic status (SES) and parents’ education have a significant effect on students’ overall academic achievement as  well as achievement in the subjects of Mathematics and English;  
-\end{itemize}
+\begin{enumerate}
+    \item Socioeconomic status (SES) and parents’ education have a significant effect on students’ overall academic achievement as  well as achievement in the subjects of Mathematics and English;  
 
-\begin{itemize}
-    \item[\textbf{2.}] The high and average socioeconomic level affects the performance more than the lower level;  
-\end{itemize}
+    \item The high and average socio-economic level affects the performance more than the lower level;  
 
-\begin{itemize}
-    \item[\textbf{3.}] Parents’ education means more than their occupation in relation to their children’s academic performance at school;
-\end{itemize}
+    \item Parents’ education means more than their occupation in relation to their children’s academic performance at school;
 
-\begin{itemize}
-    \item[\textbf{4.}] Girls perform better than the male students.    
-\end{itemize}
+    \item Girls perform better than the male students.    
+\end{enumerate}
 
-In our work, we defined a set of eight factors based on the factors showed in the previous study \cite{Farooq2012FACTORSAS}. Additionally, we conducted our analysis based on the analysis made by \cite{Farooq2012FACTORSAS} to compare our results with those listed in their research.  
+In our work, we defined a set of eight factors based on the factors showed in the previous study \cite{Farooq2012FACTORSAS}. We chose the set of factors for our analysis based on the factors presented in the former work mainly because these types of factors were measurable through our ENEM dataset that contains information about gender, parents' education level, and parental profession, among others. Additionally, we conducted our analysis based on the analysis made by \cite{Farooq2012FACTORSAS} to compare our results with those listed in their research.  
 
 \section{EduVizBR} 
 
-The EduVizBR tool was designed in a simple but functional way where three layers serve one another: Extract Transform and Load (ETL) Layer, Data Warehouse Layer and Data Visualization Layer. 
+The EduVizBR tool was designed with the purpose of assisting to assist Educational managers in analyzing the Brazilian high school students' performance. The tool is simple and intuitive and basically consists of three interconnected layers: Extract Transformation and Load (ETL) Layer, Data Storage Layer and Data Visualization Layer.  Next we present the architecture of our tool and describe each of its stages.
+
+
+% Our tool was designed in a simple but functional way where three layers serve one another: Extract Transform and Load (ETL) Layer, Data Warehouse Layer and Data Visualization Layer. 
 
 
 \subsection{Architecture}
@@ -163,7 +156,11 @@ The ETL layer gets raw input data from the three public datasets (i.e. ENEM, FUN
 
 \paragraph{Data Warehouse Layer}\
 
-The job of the Data Warehouse Layer is to gather the cleared datasets from the ETL layer, performing a join on them, this way we could build relations between the three different datasets.  It also stores this unified version from our initial datasets in a way that is ready to be sent to the next layer (i.e., the Data Visualization Layer). In this layer, we utilized Dask and Parquet for data storage.
+The job of the Data Warehouse Layer is to gather the cleared datasets from the ETL layer, performing a join on them, this way we could build relations between the three different datasets.  It also stores this unified version using Parquet and processes it using Dask.
+
+This unified version makes it easier for us to explore data of different contexts (performance and investments) according to specific needs, depending on which kind of visualization the manager wants, and send it to the next layer (i.e., the Data Visualization Layer).  
+
+While architecting this layer, we realized we had two options: a data warehouse or a data lake, then we decided for the former because we are dealing with a structured dataset that essentially contains temporal data.
 
 \paragraph{Data Visualization Layer}\
 
@@ -179,21 +176,20 @@ As guidance to our study, we defined one Main Research Question (MRQ), and three
 
 \paragraph{Main Research Question}\
 
-\textbf{MRQ.} How can we assist Education managers in their decision-making process through the use of a decision support tool that analyzes students' performance according to the most relevant factors?
+\textbf{MRQ.} How can we assist Education managers in their decision-making process through the use of a decision support tool that analyzes high school students' performance according to the most relevant factors?
 
 \paragraph{Research Sub-Questions}\
 
 \begin{itemize}
-    \item[\textbf{RQ1.}] Which factors influence the school performance of elementary and high school
-students?
+    \item[\textbf{RSQ1.}] Which factors influence the school performance of high school students?
 \end{itemize}
 
 \begin{itemize}
-    \item[\textbf{RQ2.}] What benefits can the integration of multiple public databases bring to the evaluation of the educational scenario by education managers?
+    \item[\textbf{RSQ2.}] What benefits can the integration of multiple public databases bring to the evaluation of the educational scenario by education managers?
 \end{itemize}
 
 \begin{itemize}
-    \item[\textbf{RQ3.}]  Is the creation of a decision support tool to guide Education managers viable?
+    \item[\textbf{RSQ3.}]  Is the creation of a decision support tool to guide Education managers viable?
 \end{itemize}
 
 \subsection{Research Goals}
@@ -203,8 +199,9 @@ students?
 Our research goals are defined as follows: 
 
 \begin{enumerate}
-    \item To investigate the main factors that impact the school performance of Brazilian students;
-    \item To integrate public datasets such as ENEM (National High School Exam)\footnote{ENEM dataset available at: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem}}, SAEB \footnote{SAEB dataset available at: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/saeb}}, Basic Education Maintenance and Development Fund (FUNDEB), and PNAE; \footnote{FUNDEB and PNAE datasets available at: \url{https://www.fnde.gov.br/dadosabertos/}}
+    \item To investigate the main factors that impact the school performance of Brazilian high school students;
+    \item To integrate public datasets such as ENEM (National High School Exam)\footnote{ENEM dataset available at: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem}}, Basic Education Evaluation System (SAEB) \footnote{SAEB dataset available at: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/saeb}}, Basic Education Maintenance and Development Fund (FUNDEB), and National School Feeding Program (PNAE) \footnote{FUNDEB and PNAE datasets available at: \url{https://www.fnde.gov.br/dadosabertos/}};
+    
     \item To design and develop a dashboard to concentrate the information needed to support the decision-making process of education managers.
     
 \end{enumerate}
@@ -222,8 +219,13 @@ Additionally, we defined specific goals such as:
 
 % \colorbox{green}{DESCREVER O ESTUDO DE CASO, OS DADOS QUE FORAM USADOS} \colorbox{green}{E OS RESULTADOS GERAIS} %
 
+\subsection{Data}
 
+The ENEM test takes place in two days but some participants miss one of the days. As in this case study we are going to analyze the grades, we chose to remove from the dataset data of candidates who missed at least one day of the exam.
 
+In this case study, EduVizBR uses ENEM's data from 2015 to 2020, in each year there are millions of participants, with a massive data volume. To reduce data loading and processing time, we filtered only the necessary columns to generate the views with Dask\footnote{Dask available at: \url{https://dask.org/}}. And to reduce storage space, we saved the database using Parquet\footnote{Parquet available at: \url{https://pypi.org/project/parquet/}}.
+
+Every year there are candidates who signed up and did not take the test. And as the grades are the focus of our analysis, we had to deal with some missing data. We initially created groups based on the candidates' region and school type, then we included the group mean grade on data where the grade was null. But we observed that some states have a lot of null data, and using the mean like this could influence the results. To solve this problem, we chose to exclude the data where one of the grades was null.
 
 \subsection{Case Study Results}
 
@@ -233,17 +235,17 @@ Additionally, we defined specific goals such as:
 % \label{dashboard}
 % \end{figure}
 
-We validated our tool through the conduction of a use case comprising the exploration and analysis of the ENEM dataset. As we mentioned previously, our analysis in this case study was based on the analysis presented in [Farooq et al. 2012]. We chose this strategy in order to have a comparison between our results and the findings of a related work.
+We validated our tool through the conduction of a use case comprising the exploration and analysis of the ENEM dataset, as these data form a normal distribution, we chose to use the mean in the analyzes. As we mentioned previously, our analysis in this case study was based on the analysis presented in [Farooq et al. 2012]. We chose this in order to have a comparison between our results and the findings of a related work.
 % Atualizar resultados de acordo com as novas imagens geradas com os novos dados %
 
-\subsubsection{Analyses by Gender}\
+\subsubsection{\hl{Analyses by Gender}}\
 
-Considering students' performance analyses by gender, we perceived a high impact of the gender factor on students' mean scores. However, our results diverge from the findings revealed in \cite{Farooq2012FACTORSAS}, where girls performed, in Mathematics, better than boys. Our analysis showed that, in 2020, in all Brazilian states, the mean score for male students was higher than the mean score for female students in Mathematics, as we can see in Figure \ref{gender}. 
+Considering students' performance analyses by gender, our analysis showed that, in 2020, the mean score for male students were higher than the mean score for female students in Mathematics, as we can see in Figure \ref{gender}. 
 
 The state with the highest difference between men and women mean scores was Rio Grande do Norte (RN), where men scores surpassed women's by 54 points. In contrast, the lowest difference between their mean grades occurred in the Amapá (AM) state, with a difference of 30 points. The overall women's mean score for math in 2020 was approximately 490 points, where men's was 538 (i.e., approximately 48 points lower). 
 
 \begin{figure}[h!]
-\centerline{\includegraphics[scale=0.5]{images/mean_math_grades_per_state_and_diff_2020.png}}
+\centerline{\includegraphics[scale=0.28]{images/mean_math_grades_per_state_and_diff_2020.png}}
 \caption{Mean of Mathematics grades per Brazilian State, in 2020.} 
 \label{gender}
 \end{figure}
@@ -304,18 +306,18 @@ Similarly, students whose parents had less rewarded professions performed worse 
 \subsubsection{Discussion}
 % \subsection{Definition of a set of factors from the ENEM dataset} %
 
-Regarding our first research sub-question (RSQ1) that investigates which factors influence the school performance of elementary and high school
-students, we can assume we answered it by presenting in our case study the list of factors that impact Brazilian students for the ENEM scenario, which are: 1- parents' educational attainemnt; 2- geographical belongingness; 3- age; 4- gender; 5- marital status; 6- ethnicity; 7- parents' profession; 8- income.
+Regarding our first research sub-question (RSQ1) that investigates which factors influence the school performance of high school
+students, we can assume we answered it by presenting in our case study the list of factor that impact Brazilian students for the ENEM scenario, which are: 1- parents' educational attainemnt; 2- geographical belongingness; 3- age; 4- gender; 5- marital status; 6- ethnicity; 7- parents' profession; 8- income.
 
 The definition of a set of the most relevant factors that influence student’s performance to be utilized in the data visualization module of our tool was the first result of our work. These factors were utilized to support our analyses.
-% (Figure \ref{set_of_factor}) %
+% (Figure \ref{set_of_factor}) % 
 Therefore, other researchers can benefit from the use of the set of factors we applied in our case study to replicate similar analyses in the Educational scenario. 
 
 % \begin{figure}[h] \centerline{\includegraphics[scale=0.41]{images/set_of_factors.png}}\caption{Set of factors to be utilized as filters in our analysis.} \label{set_of_factor} \end{figure} %
 
 The answer to our RSQ2 (where we investigate what benefits can the integration of multiple public databases bring to the evaluation of the educational scenario by educational managers) conducted us to our second result, which was the integration of public databases, such as ENEM, and PNAE. We also prepared the data for analysis and visualization phases by preprocessing and cleaning the data, as shown in Section 3.2. 
 
-At last, by answering our third sub-question RSQ3, where we discuss the viability of the creation of a decision support tool to guide Education managers, we reached the last and most important result of this work, which was the design and development of a decision support system that can guide Educational managers in their decision-making process (Figure \ref{dashboard}). 
+At last, by answering our third sub-question RSQ3, where we discuss the viability of the creation of a decision support tool to guide Education managers, we reached the last and most important result of this work, which was the design and development of a decision support system that can guide Educational managers in their decision-making process. 
 
 % \colorbox{green}{[DESCREVER OS RESULTADOS A NÍVEL DE FERRAMENTA? FOI} \colorbox{green}{RÁPIDO A FERRAMENTA? OS GESTORES CONSEGUEM TOMAR DECISÕES?} %
 
@@ -341,7 +343,7 @@ We are planning on evolving this work mainly by:
 
 As minor improvements, we aim to compare our findings with the results revealed in the other works from our literature review. Additionally, we will increment our dashboard with a profile of the students who did the ENEM exam, according to sex, age, income, ethnicity, etc.
 
-Finally, we aim to validate our decision support tool using different use cases (other than the ENEM) such as SAEB, ICT Education\footnote{ICT Education available at: \url{https://cetic.br/pt/pesquisa/educacao/}} data, PNAE, and FUNDEB. Using the SAEB data, we aim at analyzing the scores for Math and Portuguese exams of students from elementary and high schools; For the ICT Education data, on the other hand, we plan to analyze the use of technologies in schools over time; and, at last, we plan to analyze the Brazilian investments made in Education over time using FUNDEB and PNAE datasets.
+Finally, we aim to validate our decision support tool using different use cases (other than the ENEM) such as SAEB, ICT Education\footnote{ICT Education available at: \url{https://cetic.br/pt/pesquisa/educacao/}} data, PNAE, and FUNDEB. Using the SAEB data, we aim at analyzing the scores for Math and Portuguese exams of students from basic education (before high school); For the ICT Education data, on the other hand, we plan to analyze the use of technologies in schools over time; and, at last, we plan to analyze the Brazilian investments made in Education over time using FUNDEB and PNAE datasets.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
