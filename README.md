@@ -15,6 +15,6 @@ pip install -r requirements-pip.txt
 
 To run the dashboard
 ```sh
-cd dashboard
+cd src
 streamlit run dashboard.py
 ```
