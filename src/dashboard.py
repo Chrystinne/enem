@@ -1,4 +1,5 @@
 from turtle import position
+from matplotlib.pyplot import margins
 import streamlit as st
 import pandas as pd
 import dask.dataframe as dd
@@ -32,16 +33,16 @@ titles_and_graphs = {
     "Socioeconomic Status": {"type": None, "questions": ""},
 }
 
-grades_and_columns = {"Mathematics": "NU_NOTA_MT", 
+grades_names_to_columns = {"Mathematics": "NU_NOTA_MT", 
                      "Languages and Codes": "NU_NOTA_LC", 
                      "Human Sciences": "NU_NOTA_CH", 
                      "Nature Sciences": "NU_NOTA_CN",
                      "Essay": "NU_NOTA_REDACAO"}
 
-columns_and_grades = {item[1]: item[0] for item in grades_and_columns.items()}                     
+columns_to_grades_names = {item[1]: item[0] for item in grades_names_to_columns.items()}                     
 
 factors = titles_and_graphs.keys()
-grades = grades_and_columns.keys()
+grades = grades_names_to_columns.keys()
 
 # Top text area
 with st.container():
@@ -180,8 +181,8 @@ def our_plot(params, ddf_par, st):
         if 'questions' in params:
             q1 = params['questions'][1]
             q2 = params['questions'][0]
-            filtro1 = ddf_par.groupby([q1, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
-            filtro2 = ddf_par.groupby([q2, 'NU_ANO'])[grades_and_columns[grade]].mean().compute().sort_index(ascending=False)
+            filtro1 = ddf_par.groupby([q1, 'NU_ANO'])[grades_names_to_columns[grade]].mean().compute().sort_index(ascending=False)
+            filtro2 = ddf_par.groupby([q2, 'NU_ANO'])[grades_names_to_columns[grade]].mean().compute().sort_index(ascending=False)
             women = filtro1.index.get_level_values(q1)[1:]
             men = filtro2.index.get_level_values(q2)[1:]
             women_bins = pd.Series(filtro1.values)[1:]
@@ -216,7 +217,7 @@ def our_plot(params, ddf_par, st):
                         name='Fathers',
                         hoverinfo='y',
                         text=men_bins.apply(lambda y: f"{y:.2f}"),
-                        marker=dict(color='purple')
+                        marker=dict(color='blue')
                         ),
                     go.Bar(y=y,
                         x=women_bins,
@@ -229,10 +230,10 @@ def our_plot(params, ddf_par, st):
     
     elif params["type"] == "bars":
 
-        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])['NU_NOTA_MT'].mean().reset_index().compute()
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])[grades_names_to_columns[grade]].mean().reset_index().compute()
         
-        women = filtro[filtro.TP_SEXO == 'F'].NU_NOTA_MT
-        men = filtro[filtro.TP_SEXO == 'M'].NU_NOTA_MT
+        women = filtro[filtro.TP_SEXO == 'F'][grades_names_to_columns[grade]]
+        men = filtro[filtro.TP_SEXO == 'M'][grades_names_to_columns[grade]]
         dif = (men.values - women.values)
         estados = filtro.iloc[men.index]['SG_UF_RESIDENCIA'].values
 
@@ -244,41 +245,47 @@ def our_plot(params, ddf_par, st):
         max_women_value = floor(women.max())
         min_women_value = floor(women.min())
 
-        layout = go.Layout(yaxis=go.layout.YAxis(title='Mean Mathematics Grades',
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean {grade} Grades',
                                                  tickvals=[min_women_value, max_women_value, 0, min_men_value, max_men_value],
                                                  ticktext=[min_women_value, max_women_value, 0, min_men_value, max_men_value]),
                            xaxis=go.layout.XAxis(title="States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=100, height=430)
+                           bargap=0.1, width=1000, height=500)
 
         data_ = [go.Bar(y=filtro.men,
                     x=filtro.estados,
                     name='Men',
-                    hoverinfo='x',
-                    text=filtro.men.apply(lambda y: f"{y:.2f}"),
-                    marker=dict(color='purple'),
+                    hoverinfo='x+name+y',
+                    text=filtro.men.apply(lambda y: f"{y:.0f}"),
+                    marker=dict(color='#32348E'),
+                    textfont=dict(family="Arial",
+                                  size=80),
                     textposition='outside'
                     ),
                 go.Bar(y=filtro.women,
                     x=filtro.estados,
                     name='Women',
-                    text=filtro.women.apply(lambda y: f"{y:.2f}"),
-                    hoverinfo='x',
-                    marker=dict(color='seagreen'),
+                    text=filtro.women.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#FE0000'),
+                    textfont=dict(family="Arial",
+                                  size=60),
                     textposition='outside'
                     ),
                 go.Scatter(x=filtro.estados, 
                            y=filtro.dif, 
-                           hoverinfo='y',
+                           hoverinfo='x+name+y',
                            name='Difference',
-                           textfont=dict(color='white'),
-                           text=filtro.dif.apply(lambda y: f"{y:.2f}"), 
-                           marker=dict(color='red'),
+                           textfont=dict(color='white',
+                                            family="Arial",
+                                                    size=15),
+                           text=filtro.dif.apply(lambda y: f"{y:.0f}"), 
+                           marker=dict(color='yellow'),
                            mode='lines+markers+text',
                            textposition='top center')
                 ]
         fig = go.Figure(data=data_, layout=layout)
-        fig.update_layout(barmode='group')
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
         st.plotly_chart(fig, use_container_width=True)
 
