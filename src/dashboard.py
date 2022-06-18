@@ -206,7 +206,7 @@ def our_plot(params, ddf_par, st):
                                 tickvals=[-1*max_women_value, -1*min_women_value, 0, min_men_value, max_men_value],
                                 ticktext=[max_women_value, min_women_value, 0, min_men_value, max_men_value],
                                 tickwidth=4,
-                                title=f'Mean {grade} Grades',
+                                title=f'Mean {grade} Grades in {year}',
                                 ),
                             barmode='overlay',
                             bargap=0.1, width=50, height=400)
@@ -245,12 +245,12 @@ def our_plot(params, ddf_par, st):
         max_women_value = floor(women.max())
         min_women_value = floor(women.min())
 
-        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean {grade} Grades',
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
                                                  tickvals=[min_women_value, max_women_value, 0, min_men_value, max_men_value],
                                                  ticktext=[min_women_value, max_women_value, 0, min_men_value, max_men_value]),
                            xaxis=go.layout.XAxis(title="States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=500)
+                           bargap=0.1, width=1000, height=550)
 
         data_ = [go.Bar(y=filtro.men,
                     x=filtro.estados,
@@ -267,7 +267,7 @@ def our_plot(params, ddf_par, st):
                     name='Women',
                     text=filtro.women.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#FE0000'),
+                    marker=dict(color='#F78D01'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -287,6 +287,11 @@ def our_plot(params, ddf_par, st):
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig['layout']['xaxis']['titlefont'] = dict(size=20)
+        fig['layout']['xaxis']['tickfont'] = dict(size=20)
+        fig['layout']['yaxis']['titlefont'] = dict(size=20)
+        fig['layout']['yaxis']['tickfont'] = dict(size=20)
+        fig['layout']['legend']['font'] = dict(size=20)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
