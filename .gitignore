@@ -1,3 +1,10 @@
 *checkpoint.ipynb
 datasets/integrated/.ipynb_checkpoints/integrated_datas_0-checkpoint.csv
 datasets/.ipynb_checkpoints/integrated_data-checkpoint.csv
+*.gzip
+*.csv
+*.parquet
+*.sas
+*.ods
+*.7z
+datasets/*
