@@ -10,7 +10,7 @@ import plotly.express as px
 import chart_studio.plotly as py
 import plotly.graph_objs as go
 
-import leafmap.foliumap as leafmap
+# import leafmap.foliumap as leafmap
 
 from tempo import inicio, fim
 
