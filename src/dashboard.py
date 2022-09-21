@@ -19,18 +19,18 @@ st.set_page_config(layout="wide")
 
 titles_and_graphs = {
     "Geographical belongingness": {"type": 'geo', "questions": ""},
-    "Age": {"type": None, "questions": "", "dimension": "age"},
+    # "Age": {"type": None, "questions": "", "dimension": "age"},
     "Gender": {"title": "Gender", "type": "bars"},
-    "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
-    "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
-    "Marital status": {"type": None, "questions": ""},
-    "Ethnicity": {"type": None, "questions": ""},
+    # "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
+    # "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
+    # "Marital status": {"type": None, "questions": ""},
+    # "Ethnicity": {"type": None, "questions": ""},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
-    "Income": {"type": 'cloro', "questions": ""},
-    "Socioeconomic Status": {"type": None, "questions": ""},
+    # "Income": {"type": 'cloro', "questions": ""},
+    # "Socioeconomic Status": {"type": None, "questions": ""},
 }
 
 grades_names_to_columns = {"Mathematics": "NU_NOTA_MT", 
@@ -46,7 +46,7 @@ grades = grades_names_to_columns.keys()
 
 # Top text area
 with st.container():
-    st.title("Education Manager's Guide 📊")
+    st.title("EduVizBR 📊")
 
 # column_1, column_2, column_3 = st.columns(3)
 (column_1, column_2, column_3), test_data = st.columns(3), False
@@ -199,8 +199,7 @@ def our_plot(params, ddf_par, st):
             print(men_bins)
             print(women_bins)
 
-            layout = go.Layout(yaxis=go.layout.YAxis(title=params['title'],
-                                                     ),
+            layout = go.Layout(yaxis=go.layout.YAxis(title=params['title']),
                             xaxis=go.layout.XAxis(
                                 range=[-710, 710],
                                 tickvals=[-1*max_women_value, -1*min_women_value, 0, min_men_value, max_men_value],
@@ -209,7 +208,7 @@ def our_plot(params, ddf_par, st):
                                 title=f'Mean {grade} Grades in {year}',
                                 ),
                             barmode='overlay',
-                            bargap=0.1, width=50, height=400)
+                            bargap=0.1, width=50, height='400px')
 
             data_ = [go.Bar(y=y,
                         x=men_bins,
