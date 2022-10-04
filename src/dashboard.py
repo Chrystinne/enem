@@ -20,11 +20,11 @@ st.set_page_config(layout="wide")
 titles_and_graphs = {
     "Geographical belongingness": {"type": 'geo', "questions": ""},
     # "Age": {"type": None, "questions": "", "dimension": "age"},
-    "Gender": {"title": "Gender", "type": "bars"},
+    "Gender": {"title": "Gender", "type": "bar_gender"},
     # "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
     # "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
-    # "Marital status": {"type": None, "questions": ""},
-    # "Ethnicity": {"type": None, "questions": ""},
+    "Marital status": {"title": "Marital_status", "type": "bar_marital_status"},
+    # "Ethnicity": {"title": "Ethnicity", "type": "Ethnicity", "questions": ["Q006"]},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
@@ -227,7 +227,7 @@ def our_plot(params, ddf_par, st):
                         marker=dict(color='seagreen')
                         )]
     
-    elif params["type"] == "bars":
+    elif params["type"] == "bar_gender":
 
         filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SEXO'])[grades_names_to_columns[grade]].mean().reset_index().compute()
         
@@ -292,6 +292,76 @@ def our_plot(params, ddf_par, st):
         fig['layout']['yaxis']['tickfont'] = dict(size=20)
         fig['layout']['legend']['font'] = dict(size=20)
         st.plotly_chart(fig, use_container_width=True)
+
+    elif params["type"] == "bar_marital_status":
+
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_ESTADO_CIVIL'])[grades_names_to_columns[grade]].mean().reset_index().compute()
+        single = filtro[filtro.TP_ESTADO_CIVIL == 1][grades_names_to_columns[grade]]        
+        married = filtro[filtro.TP_ESTADO_CIVIL == 2][grades_names_to_columns[grade]]
+        divorced = filtro[filtro.TP_ESTADO_CIVIL == 3][grades_names_to_columns[grade]]
+        estados = filtro.iloc[single.index]['SG_UF_RESIDENCIA'].values
+
+        filtro = pd.DataFrame({'single': single.values, 'married': married.values, 'divorced': divorced.values, 'estados': estados}).reset_index(drop=True)
+        # print(filtro)
+
+        max_single_value = floor(single.max())
+        min_single_value = floor(single.min())
+        max_married_value = floor(married.max())
+        min_married_value = floor(married.min())
+        max_divorced_value = floor(divorced.max())
+        min_divorced_value = floor(divorced.min())
+
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
+                                                #  tickvals=[min_married_value, max_married_value, 0, min_single_value, max_single_value, min_divorced_value, max_divorced_value],
+                                                #  ticktext=[min_married_value+300, max_married_value+200, 0, min_single_value+100, max_single_value+50, min_divorced_value+25, max_divorced_value]
+                                                 ),
+                           xaxis=go.layout.XAxis(title="States"),
+                        #    barmode='overlay',
+                           bargap=0.1, width=1000, height=550)
+
+        data_ = [go.Bar(y=filtro.single,
+                    x=filtro.estados,
+                    name='Single',
+                    hoverinfo='x+name+y',
+                    text=filtro.single.apply(lambda y: f"{y:.0f}"),
+                    marker=dict(color='#32348E'),
+                    textfont=dict(family="Arial",
+                                  size=80),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.married,
+                    x=filtro.estados,
+                    name='Married',
+                    text=filtro.married.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#F78D01'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.divorced,
+                    x=filtro.estados,
+                    name='Divorced',
+                    text=filtro.divorced.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#A71C09'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                ]
+        fig = go.Figure(data=data_, layout=layout)
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig['layout']['xaxis']['titlefont'] = dict(size=20)
+        fig['layout']['xaxis']['tickfont'] = dict(size=20)
+        fig['layout']['yaxis']['titlefont'] = dict(size=20)
+        fig['layout']['yaxis']['tickfont'] = dict(size=20)
+        fig['layout']['legend']['font'] = dict(size=20)
+        st.plotly_chart(fig, use_container_width=True)
+
+
+
 
     elif params["type"] == "parallel":
         
