@@ -24,12 +24,12 @@ titles_and_graphs = {
     # "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
     # "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
     "Marital status": {"title": "Marital_status", "type": "bar_marital_status"},
-    # "Ethnicity": {"title": "Ethnicity", "type": "Ethnicity", "questions": ["Q006"]},
+    "Ethnicity": {"title": "Ethnicity", "type": "bar_ethnicity"},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
-    # "Income": {"type": 'cloro', "questions": ""},
+    "Income": {"type": 'bar_income'},
     # "Socioeconomic Status": {"type": None, "questions": ""},
 }
 
@@ -237,16 +237,9 @@ def our_plot(params, ddf_par, st):
         estados = filtro.iloc[men.index]['SG_UF_RESIDENCIA'].values
 
         filtro = pd.DataFrame({'men': men.values, 'women': women.values, 'estados': estados, 'dif': dif}).sort_values('dif').reset_index(drop=True)
-        print(filtro)
-
-        max_men_value = floor(men.max())
-        min_men_value = floor(men.min())
-        max_women_value = floor(women.max())
-        min_women_value = floor(women.min())
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
-                                                 tickvals=[min_women_value, max_women_value, 0, min_men_value, max_men_value],
-                                                 ticktext=[min_women_value, max_women_value, 0, min_men_value, max_men_value]),
+                                                ),
                            xaxis=go.layout.XAxis(title="States"),
                         #    barmode='overlay',
                            bargap=0.1, width=1000, height=550)
@@ -302,18 +295,8 @@ def our_plot(params, ddf_par, st):
         estados = filtro.iloc[single.index]['SG_UF_RESIDENCIA'].values
 
         filtro = pd.DataFrame({'single': single.values, 'married': married.values, 'divorced': divorced.values, 'estados': estados}).reset_index(drop=True)
-        # print(filtro)
-
-        max_single_value = floor(single.max())
-        min_single_value = floor(single.min())
-        max_married_value = floor(married.max())
-        min_married_value = floor(married.min())
-        max_divorced_value = floor(divorced.max())
-        min_divorced_value = floor(divorced.min())
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
-                                                #  tickvals=[min_married_value, max_married_value, 0, min_single_value, max_single_value, min_divorced_value, max_divorced_value],
-                                                #  ticktext=[min_married_value+300, max_married_value+200, 0, min_single_value+100, max_single_value+50, min_divorced_value+25, max_divorced_value]
                                                  ),
                            xaxis=go.layout.XAxis(title="States"),
                         #    barmode='overlay',
@@ -360,8 +343,174 @@ def our_plot(params, ddf_par, st):
         fig['layout']['legend']['font'] = dict(size=20)
         st.plotly_chart(fig, use_container_width=True)
 
+    elif params["type"] == "bar_ethnicity":
 
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_COR_RACA'])[grades_names_to_columns[grade]].mean().reset_index().compute()
+        white = filtro[filtro.TP_COR_RACA == 1][grades_names_to_columns[grade]]        
+        black = filtro[filtro.TP_COR_RACA == 2][grades_names_to_columns[grade]]
+        brown = filtro[filtro.TP_COR_RACA == 3][grades_names_to_columns[grade]]
+        yellow = filtro[filtro.TP_COR_RACA == 4][grades_names_to_columns[grade]]        
+        indigenous = filtro[filtro.TP_COR_RACA == 5][grades_names_to_columns[grade]]
+        estados = filtro.iloc[white.index]['SG_UF_RESIDENCIA'].values
 
+        filtro = pd.DataFrame({'white': white.values, 'black': black.values, 'brown': brown.values, 'yellow': yellow.values, 'indigenous': indigenous.values, 'estados': estados}).reset_index(drop=True)
+
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
+                                                 ),
+                           xaxis=go.layout.XAxis(title="States"),
+                        #    barmode='overlay',
+                           bargap=0.1, width=1000, height=550)
+
+        data_ = [go.Bar(y=filtro.white,
+                    x=filtro.estados,
+                    name='White',
+                    hoverinfo='x+name+y',
+                    text=filtro.white.apply(lambda y: f"{y:.0f}"),
+                    marker=dict(color='#22348E'),
+                    textfont=dict(family="Arial",
+                                  size=80),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.black,
+                    x=filtro.estados,
+                    name='Black',
+                    text=filtro.black.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#000000'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.brown,
+                    x=filtro.estados,
+                    name='Brown',
+                    text=filtro.brown.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#A71C09'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.yellow,
+                    x=filtro.estados,
+                    name='Yellow',
+                    text=filtro.yellow.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#F78D01'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.indigenous,
+                    x=filtro.estados,
+                    name='Indigenous',
+                    text=filtro.indigenous.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#FF0101'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                ]
+        fig = go.Figure(data=data_, layout=layout)
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig['layout']['xaxis']['titlefont'] = dict(size=20)
+        fig['layout']['xaxis']['tickfont'] = dict(size=20)
+        fig['layout']['yaxis']['titlefont'] = dict(size=20)
+        fig['layout']['yaxis']['tickfont'] = dict(size=20)
+        fig['layout']['legend']['font'] = dict(size=20)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif params["type"] == "bar_income":
+
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'Q006'])[grades_names_to_columns[grade]].mean().reset_index().compute()
+        b_class = filtro[filtro.Q006 == 'B'][grades_names_to_columns[grade]]        
+        c_class = filtro[filtro.Q006 == 'C'][grades_names_to_columns[grade]]
+        d_class = filtro[filtro.Q006 == 'D'][grades_names_to_columns[grade]]
+        e_class = filtro[filtro.Q006 == 'E'][grades_names_to_columns[grade]]        
+        f_class = filtro[filtro.Q006 == 'F'][grades_names_to_columns[grade]]
+        g_class = filtro[filtro.Q006 == 'G'][grades_names_to_columns[grade]]
+        estados = filtro.iloc[b_class.index]['SG_UF_RESIDENCIA'].values
+
+        filtro = pd.DataFrame({'b_class': b_class.values, 'c_class': c_class.values, 'd_class': d_class.values, 'e_class': e_class.values, 'f_class': f_class.values, 'g_class': g_class.values, 'estados': estados}).reset_index(drop=True)
+
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
+                                                 ),
+                           xaxis=go.layout.XAxis(title="States"),
+                        #    barmode='overlay',
+                           bargap=0.1, width=1000, height=550)
+
+        data_ = [go.Bar(y=filtro.b_class,
+                    x=filtro.estados,
+                    name='B Class',
+                    hoverinfo='x+name+y',
+                    text=filtro.b_class.apply(lambda y: f"{y:.0f}"),
+                    marker=dict(color='#32348E'),
+                    textfont=dict(family="Arial",
+                                  size=80),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.c_class,
+                    x=filtro.estados,
+                    name='C Class',
+                    text=filtro.c_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#F78D01'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.d_class,
+                    x=filtro.estados,
+                    name='D Class',
+                    text=filtro.d_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#12CD13'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.e_class,
+                    x=filtro.estados,
+                    name='E Class',
+                    text=filtro.e_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#071200'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.f_class,
+                    x=filtro.estados,
+                    name='F Class',
+                    text=filtro.f_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#C11D02'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.g_class,
+                    x=filtro.estados,
+                    name='G Class',
+                    text=filtro.g_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#211CA2'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                ]
+        fig = go.Figure(data=data_, layout=layout)
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig['layout']['xaxis']['titlefont'] = dict(size=20)
+        fig['layout']['xaxis']['tickfont'] = dict(size=20)
+        fig['layout']['yaxis']['titlefont'] = dict(size=20)
+        fig['layout']['yaxis']['tickfont'] = dict(size=20)
+        fig['layout']['legend']['font'] = dict(size=20)
+        st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
         
