@@ -18,8 +18,9 @@ from tempo import inicio, fim
 st.set_page_config(layout="wide")
 
 titles_and_graphs = {
-    "Geographical belongingness": {"type": 'geo', "questions": ""},
-    # "Age": {"type": None, "questions": "", "dimension": "age"},
+    # "Geographical belongingness": {"type": 'geo', "questions": ""},
+    "Income": {"type": 'bar_income'},
+    # "Age": {"type": 'bar_age'},
     "Gender": {"title": "Gender", "type": "bar_gender"},
     # "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
     # "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
@@ -29,7 +30,6 @@ titles_and_graphs = {
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
     "Mother's profession": {"type": "parallel", "questions": ["Q004"]},
-    "Income": {"type": 'bar_income'},
     # "Socioeconomic Status": {"type": None, "questions": ""},
 }
 
@@ -226,6 +226,16 @@ def our_plot(params, ddf_par, st):
                         hoverinfo='y',
                         marker=dict(color='seagreen')
                         )]
+
+    elif params["type"] == "pizza_graph":
+        fig = go.Figure(go.Pie(
+        values = [40000000, 20000000, 30000000, 10000000],
+        labels = ["Wages", "Operating expenses", "Cost of sales", "Insurance"],
+        texttemplate = "%{label}: %{value:$,s} <br>(%{percent})"
+        # ,textposition = "inside"
+        ))
+        fig.update_layout(legend=dict(yanchor="top", y=1.49, xanchor="left", x=0.01))
+        fig.show()
     
     elif params["type"] == "bar_gender":
 
@@ -238,20 +248,20 @@ def our_plot(params, ddf_par, st):
 
         filtro = pd.DataFrame({'men': men.values, 'women': women.values, 'estados': estados, 'dif': dif}).sort_values('dif').reset_index(drop=True)
 
-        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
-                                                ),
-                           xaxis=go.layout.XAxis(title="States"),
+        layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',),
+                           xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550)
+                           bargap=0.1, width=1000, height=550,
+                           legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
         data_ = [go.Bar(y=filtro.men,
                     x=filtro.estados,
                     name='Men',
                     hoverinfo='x+name+y',
                     text=filtro.men.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#32348E'),
+                    marker=dict(color='#DB5F40'),
                     textfont=dict(family="Arial",
-                                  size=80),
+                                  size=15),
                     textposition='outside'
                     ),
                 go.Bar(y=filtro.women,
@@ -259,31 +269,31 @@ def our_plot(params, ddf_par, st):
                     name='Women',
                     text=filtro.women.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#F78D01'),
+                    marker=dict(color='#7DBEAF'),
                     textfont=dict(family="Arial",
-                                  size=60),
+                                  size=15),
                     textposition='outside'
                     ),
                 go.Scatter(x=filtro.estados, 
                            y=filtro.dif, 
                            hoverinfo='x+name+y',
                            name='Difference',
-                           textfont=dict(color='white',
+                           textfont=dict(color='black',
                                             family="Arial",
                                                     size=15),
                            text=filtro.dif.apply(lambda y: f"{y:.0f}"), 
-                           marker=dict(color='yellow'),
+                           marker=dict(color='red'),
                            mode='lines+markers+text',
                            textposition='top center')
                 ]
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig['layout']['xaxis']['titlefont'] = dict(size=20)
-        fig['layout']['xaxis']['tickfont'] = dict(size=20)
-        fig['layout']['yaxis']['titlefont'] = dict(size=20)
-        fig['layout']['yaxis']['tickfont'] = dict(size=20)
-        fig['layout']['legend']['font'] = dict(size=20)
+        fig['layout']['xaxis']['titlefont'] = dict(size=14)
+        fig['layout']['xaxis']['tickfont'] = dict(size=12)
+        fig['layout']['yaxis']['titlefont'] = dict(size=14)
+        fig['layout']['yaxis']['tickfont'] = dict(size=12)
+        fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "bar_marital_status":
@@ -298,16 +308,17 @@ def our_plot(params, ddf_par, st):
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
                                                  ),
-                           xaxis=go.layout.XAxis(title="States"),
+                           xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550)
+                           bargap=0.1, width=1000, height=550,
+                           legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
         data_ = [go.Bar(y=filtro.single,
                     x=filtro.estados,
                     name='Single',
                     hoverinfo='x+name+y',
                     text=filtro.single.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#32348E'),
+                    marker=dict(color='#55A5FF'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
@@ -317,7 +328,7 @@ def our_plot(params, ddf_par, st):
                     name='Married',
                     text=filtro.married.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#F78D01'),
+                    marker=dict(color='#E66C4F'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -327,20 +338,21 @@ def our_plot(params, ddf_par, st):
                     name='Divorced',
                     text=filtro.divorced.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#A71C09'),
+                    marker=dict(color='#64DB8F'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 ]
         fig = go.Figure(data=data_, layout=layout)
-        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_layout(barmode='group', font=dict(size=80, family="Arial", color="black"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig['layout']['xaxis']['titlefont'] = dict(size=20)
-        fig['layout']['xaxis']['tickfont'] = dict(size=20)
-        fig['layout']['yaxis']['titlefont'] = dict(size=20)
-        fig['layout']['yaxis']['tickfont'] = dict(size=20)
-        fig['layout']['legend']['font'] = dict(size=20)
+        fig['layout']['xaxis']['titlefont'] = dict(size=14)
+        fig['layout']['xaxis']['tickfont'] = dict(size=12)
+        fig['layout']['yaxis']['titlefont'] = dict(size=14)
+        fig['layout']['yaxis']['tickfont'] = dict(size=12)
+        fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "bar_ethnicity":
@@ -357,7 +369,7 @@ def our_plot(params, ddf_par, st):
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
                                                  ),
-                           xaxis=go.layout.XAxis(title="States"),
+                           xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
                            bargap=0.1, width=1000, height=550)
 
@@ -366,7 +378,7 @@ def our_plot(params, ddf_par, st):
                     name='White',
                     hoverinfo='x+name+y',
                     text=filtro.white.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#22348E'),
+                    marker=dict(color='#DB5C25'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
@@ -376,7 +388,7 @@ def our_plot(params, ddf_par, st):
                     name='Black',
                     text=filtro.black.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#000000'),
+                    marker=dict(color='#8358CF'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -386,7 +398,7 @@ def our_plot(params, ddf_par, st):
                     name='Brown',
                     text=filtro.brown.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#A71C09'),
+                    marker=dict(color='#649541'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -396,7 +408,7 @@ def our_plot(params, ddf_par, st):
                     name='Yellow',
                     text=filtro.yellow.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#F78D01'),
+                    marker=dict(color='#E7A800'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -406,20 +418,22 @@ def our_plot(params, ddf_par, st):
                     name='Indigenous',
                     text=filtro.indigenous.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#FF0101'),
+                    marker=dict(color='#4C82C5'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 ]
         fig = go.Figure(data=data_, layout=layout)
-        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"), 
+            # legend=dict(yanchor="top", y=1.49, xanchor="left", x=0.01)
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig['layout']['xaxis']['titlefont'] = dict(size=20)
-        fig['layout']['xaxis']['tickfont'] = dict(size=20)
-        fig['layout']['yaxis']['titlefont'] = dict(size=20)
-        fig['layout']['yaxis']['tickfont'] = dict(size=20)
-        fig['layout']['legend']['font'] = dict(size=20)
+        fig['layout']['xaxis']['titlefont'] = dict(size=14)
+        fig['layout']['xaxis']['tickfont'] = dict(size=12)
+        fig['layout']['yaxis']['titlefont'] = dict(size=14)
+        fig['layout']['yaxis']['tickfont'] = dict(size=12)
+        fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "bar_income":
@@ -437,7 +451,7 @@ def our_plot(params, ddf_par, st):
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
                                                  ),
-                           xaxis=go.layout.XAxis(title="States"),
+                           xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
                            bargap=0.1, width=1000, height=550)
 
@@ -446,7 +460,7 @@ def our_plot(params, ddf_par, st):
                     name='B Class',
                     hoverinfo='x+name+y',
                     text=filtro.b_class.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#32348E'),
+                    marker=dict(color='#E95F56'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
@@ -456,7 +470,7 @@ def our_plot(params, ddf_par, st):
                     name='C Class',
                     text=filtro.c_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#F78D01'),
+                    marker=dict(color='#F5CD39'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -466,7 +480,7 @@ def our_plot(params, ddf_par, st):
                     name='D Class',
                     text=filtro.d_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#12CD13'),
+                    marker=dict(color='#4BBD6A'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -476,7 +490,7 @@ def our_plot(params, ddf_par, st):
                     name='E Class',
                     text=filtro.e_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#071200'),
+                    marker=dict(color='#385CA8'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -486,7 +500,7 @@ def our_plot(params, ddf_par, st):
                     name='F Class',
                     text=filtro.f_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#C11D02'),
+                    marker=dict(color='#70261A'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -496,20 +510,21 @@ def our_plot(params, ddf_par, st):
                     name='G Class',
                     text=filtro.g_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#211CA2'),
+                    marker=dict(color='#8358CF'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 ]
         fig = go.Figure(data=data_, layout=layout)
-        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
+        fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig['layout']['xaxis']['titlefont'] = dict(size=20)
-        fig['layout']['xaxis']['tickfont'] = dict(size=20)
-        fig['layout']['yaxis']['titlefont'] = dict(size=20)
-        fig['layout']['yaxis']['tickfont'] = dict(size=20)
-        fig['layout']['legend']['font'] = dict(size=20)
+        fig['layout']['xaxis']['titlefont'] = dict(size=14)
+        fig['layout']['xaxis']['tickfont'] = dict(size=12)
+        fig['layout']['yaxis']['titlefont'] = dict(size=14)
+        fig['layout']['yaxis']['tickfont'] = dict(size=12)
+        fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
 
     elif params["type"] == "parallel":
