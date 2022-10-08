@@ -46,7 +46,8 @@ grades = grades_names_to_columns.keys()
 
 # Top text area
 with st.container():
-    st.title("EduVizBR 📊")
+    # st.title("EduVizBR 📊")
+    st.title("EduVizBR")
 
 # column_1, column_2, column_3 = st.columns(3)
 (column_1, column_2, column_3), test_data = st.columns(3), False
@@ -259,7 +260,7 @@ def our_plot(params, ddf_par, st):
                     name='Men',
                     hoverinfo='x+name+y',
                     text=filtro.men.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#DB5F40'),
+                    marker=dict(color='#7eb0d5'),
                     textfont=dict(family="Arial",
                                   size=15),
                     textposition='outside'
@@ -269,7 +270,7 @@ def our_plot(params, ddf_par, st):
                     name='Women',
                     text=filtro.women.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#7DBEAF'),
+                    marker=dict(color='#fd7f6f'),
                     textfont=dict(family="Arial",
                                   size=15),
                     textposition='outside'
@@ -318,7 +319,7 @@ def our_plot(params, ddf_par, st):
                     name='Single',
                     hoverinfo='x+name+y',
                     text=filtro.single.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#55A5FF'),
+                    marker=dict(color='#fd7f6f'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
@@ -328,7 +329,7 @@ def our_plot(params, ddf_par, st):
                     name='Married',
                     text=filtro.married.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#E66C4F'),
+                    marker=dict(color='#7eb0d5'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -338,7 +339,7 @@ def our_plot(params, ddf_par, st):
                     name='Divorced',
                     text=filtro.divorced.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#64DB8F'),
+                    marker=dict(color='#b2e061'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -372,13 +373,14 @@ def our_plot(params, ddf_par, st):
                            xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
                            bargap=0.1, width=1000, height=550)
-
+        #paleta
+        # "#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"
         data_ = [go.Bar(y=filtro.white,
                     x=filtro.estados,
                     name='White',
                     hoverinfo='x+name+y',
                     text=filtro.white.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#DB5C25'),
+                    marker=dict(color='#fd7f6f'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
@@ -388,7 +390,7 @@ def our_plot(params, ddf_par, st):
                     name='Black',
                     text=filtro.black.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#8358CF'),
+                    marker=dict(color='#7eb0d5'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -398,7 +400,7 @@ def our_plot(params, ddf_par, st):
                     name='Brown',
                     text=filtro.brown.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#649541'),
+                    marker=dict(color='#b2e061'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -408,7 +410,7 @@ def our_plot(params, ddf_par, st):
                     name='Yellow',
                     text=filtro.yellow.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#E7A800'),
+                    marker=dict(color='#bd7ebe'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -418,7 +420,7 @@ def our_plot(params, ddf_par, st):
                     name='Indigenous',
                     text=filtro.indigenous.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#4C82C5'),
+                    marker=dict(color='#ffb55a'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
@@ -438,16 +440,16 @@ def our_plot(params, ddf_par, st):
 
     elif params["type"] == "bar_income":
 
-        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'Q006'])[grades_names_to_columns[grade]].mean().reset_index().compute()
-        b_class = filtro[filtro.Q006 == 'B'][grades_names_to_columns[grade]]        
-        c_class = filtro[filtro.Q006 == 'C'][grades_names_to_columns[grade]]
-        d_class = filtro[filtro.Q006 == 'D'][grades_names_to_columns[grade]]
-        e_class = filtro[filtro.Q006 == 'E'][grades_names_to_columns[grade]]        
-        f_class = filtro[filtro.Q006 == 'F'][grades_names_to_columns[grade]]
-        g_class = filtro[filtro.Q006 == 'G'][grades_names_to_columns[grade]]
+        filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SES_INCOME'])[grades_names_to_columns[grade]].mean().reset_index().compute()
+        a_class = filtro[filtro.TP_SES_INCOME == 'A'][grades_names_to_columns[grade]]
+        b_class = filtro[filtro.TP_SES_INCOME == 'B'][grades_names_to_columns[grade]]        
+        c_class = filtro[filtro.TP_SES_INCOME == 'C'][grades_names_to_columns[grade]]
+        d_class = filtro[filtro.TP_SES_INCOME == 'D'][grades_names_to_columns[grade]]
+        e_class = filtro[filtro.TP_SES_INCOME == 'E'][grades_names_to_columns[grade]]        
+        # f_class = filtro[filtro.TP_SES_INCOME == 'F'][grades_names_to_columns[grade]]
         estados = filtro.iloc[b_class.index]['SG_UF_RESIDENCIA'].values
 
-        filtro = pd.DataFrame({'b_class': b_class.values, 'c_class': c_class.values, 'd_class': d_class.values, 'e_class': e_class.values, 'f_class': f_class.values, 'g_class': g_class.values, 'estados': estados}).reset_index(drop=True)
+        filtro = pd.DataFrame({'a_class': a_class.values, 'b_class': b_class.values, 'c_class': c_class.values, 'd_class': d_class.values, 'e_class': e_class.values, 'estados': estados}).reset_index(drop=True)
 
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',
                                                  ),
@@ -455,67 +457,58 @@ def our_plot(params, ddf_par, st):
                         #    barmode='overlay',
                            bargap=0.1, width=1000, height=550)
 
-        data_ = [go.Bar(y=filtro.b_class,
+        data_ = [go.Bar(y=filtro.a_class,
                     x=filtro.estados,
-                    name='B Class',
+                    name='A Class (up to 20 MS)',
+                    text=filtro.a_class.apply(lambda y: f"{y:.0f}"),
+                    hoverinfo='x+name+y',
+                    marker=dict(color='#fd7f6f'),
+                    textfont=dict(family="Arial",
+                                  size=60),
+                    textposition='outside'
+                    ),
+                go.Bar(y=filtro.b_class,
+                    x=filtro.estados,
+                    name='B Class (10-20 MS)',
                     hoverinfo='x+name+y',
                     text=filtro.b_class.apply(lambda y: f"{y:.0f}"),
-                    marker=dict(color='#E95F56'),
+                    marker=dict(color='#7eb0d5'),
                     textfont=dict(family="Arial",
                                   size=80),
                     textposition='outside'
                     ),
                 go.Bar(y=filtro.c_class,
                     x=filtro.estados,
-                    name='C Class',
+                    name='C Class (4-10 MS)',
                     text=filtro.c_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#F5CD39'),
+                    marker=dict(color='#b2e061'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 go.Bar(y=filtro.d_class,
                     x=filtro.estados,
-                    name='D Class',
+                    name='D Class (2-4 MS)',
                     text=filtro.d_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#4BBD6A'),
+                    marker=dict(color='#bd7ebe'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 go.Bar(y=filtro.e_class,
                     x=filtro.estados,
-                    name='E Class',
+                    name='E Class (up to 2 MS)',
                     text=filtro.e_class.apply(lambda y: f"{y:.0f}"),
                     hoverinfo='x+name+y',
-                    marker=dict(color='#385CA8'),
-                    textfont=dict(family="Arial",
-                                  size=60),
-                    textposition='outside'
-                    ),
-                go.Bar(y=filtro.f_class,
-                    x=filtro.estados,
-                    name='F Class',
-                    text=filtro.f_class.apply(lambda y: f"{y:.0f}"),
-                    hoverinfo='x+name+y',
-                    marker=dict(color='#70261A'),
-                    textfont=dict(family="Arial",
-                                  size=60),
-                    textposition='outside'
-                    ),
-                go.Bar(y=filtro.g_class,
-                    x=filtro.estados,
-                    name='G Class',
-                    text=filtro.g_class.apply(lambda y: f"{y:.0f}"),
-                    hoverinfo='x+name+y',
-                    marker=dict(color='#8358CF'),
+                    marker=dict(color='#ffb55a'),
                     textfont=dict(family="Arial",
                                   size=60),
                     textposition='outside'
                     ),
                 ]
+
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
@@ -609,7 +602,7 @@ def our_plot(params, ddf_par, st):
         fig = go.Figure(data=
             go.Parcoords(
                 line = dict(color = ddf_par[question],
-                        colorscale = [[0,'green'],[0.25,'blue'],[0.5,'red'],[1,'gold']],
+                        colorscale = [[0,'#7eb0d5'],[0.2,'#b2e061'],[0.4,'#bd7ebe'],[0.6,'#ffb55a'], [0.8,'#beb9db'], [1,'#fd7f6f']],
                         showscale = True,
                         cmin = 0,   
                         cmax = cmax),
