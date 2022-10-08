@@ -550,13 +550,28 @@ def our_plot(params, ddf_par, st):
                             'NU_NOTA_COMP4': 'Linguistic Mechanisms', 
                             'NU_NOTA_COMP5': 'Respect for human rights',
 
-                            'Q001': "Fahter's Education Level",
+                            'Q001': "Father's Education Level",
                             'Q002': "Mother's Education Level",
 
-                            'Q003': "Fahter's Profession",
+                            'Q003': "Father's Profession",
                             'Q004': "Mother's Profession",
                             
                             }
+
+        legend_education_level  = "0- No study\n1- Incomplete primary school\n2- Primary school\n3- Secondary school\n4- High school\n5- Graduated\n6- Post graduated\n7- Unknown"
+
+        groups_by_education_level = {'Q001': {
+                                        'A' : 'No study',
+                                        'B' : 'Incomplete proimary school',
+                                        'C' : 'Primary school',
+                                        'D' : 'Secondary school',
+                                        'E' : 'High school',
+                                        'F' : 'Graduated',
+                                        'G' : 'Post graduated',
+                                        'H' : 'Unknow'
+                                    }}
+
+        legend_parents_profession  = "0- Farmer, fisherman/fisherwoman etc\n1- Elderly caregiver, doorman/portress, salesperson etc\n2- Baker, jeweler, painter, electrician, plumber, driver etc\n3- Professor, technician, police etc\n4- Physician, engineer, judge, lawyer etc\n5- Unknown"
 
         groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
                                         'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
@@ -571,6 +586,7 @@ def our_plot(params, ddf_par, st):
         ddf_par = ddf_par.rename(columns=dict_names_exams)    
         # print(ddf_par[['Ciências da Natureza', 'Ciências Humanas', 'Linguagens e Códigos', 'Matemática']])
         question = dict_names_exams[questions[0]]
+        print(question)
         cmax = ddf_par[question].max()#.compute()
         # n_answers = df_par.to_dask_array(lengths=True)[question].nunique().compute()
         # group_vals = list(range(1,n_answers))
@@ -610,12 +626,13 @@ def our_plot(params, ddf_par, st):
             )
         )
         st.plotly_chart(fig, use_container_width=True)
-        # display data
+        print(dict_names_exams[questions[0]])
+        if (questions[0] == 'Q001' or questions[0] == 'Q002'):
+            st.text(legend_education_level)
+        elif (questions[0] == 'Q003' or questions[0] == 'Q004'):
+            st.text(legend_parents_profession)
         # with st.container():
-        #     show_data = st.checkbox("See the raw data?", key='data')
-
-        #     if show_data:
-        #         df_par
+            
 
     duration = fim(init)
     print(f"Duração: {duration}\n")
