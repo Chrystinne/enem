@@ -558,31 +558,30 @@ def our_plot(params, ddf_par, st):
                             
                             }
 
-        legend_education_level  = "1- No study\n2- Incomplete primary school\n3- Primary school\n4- Secondary school\n5- High school\n6- Graduated\n7- Post graduated\n8- Unknown"
+        legend_education_level  = "**1**- No study;\n**2**- Incomplete primary school;\n**3**- Primary school;\n**4**- Secondary school;\n**5**- High school;\n**6**- Graduated;\n**7**- Post graduated;\n**8**- Unknown."
 
-        groups_by_education_level = {'Q001': {
-                                        'A' : 'No study',
-                                        'B' : 'Incomplete proimary school',
-                                        'C' : 'Primary school',
-                                        'D' : 'Secondary school',
-                                        'E' : 'High school',
-                                        'F' : 'Graduated',
-                                        'G' : 'Post graduated',
-                                        'H' : 'Unknow'
-                                    }}
+        # groups_by_education_level = {'Q001': {
+        #                                 'A' : 'No study',
+        #                                 'B' : 'Incomplete proimary school',
+        #                                 'C' : 'Primary school',
+        #                                 'D' : 'Secondary school',
+        #                                 'E' : 'High school',
+        #                                 'F' : 'Graduated',
+        #                                 'G' : 'Post graduated',
+        #                                 'H' : 'Unknow'
+        #                             }}
 
-        legend_parents_profession  = "1- Farmer, fisherman/fisherwoman etc\n2- Elderly caregiver, doorman/portress, salesperson etc\n3- Baker, jeweler, painter, electrician, plumber, driver etc\n4- Professor, technician, police etc\n5- Physician, engineer, judge, lawyer etc\n6- Unknown"
+        legend_parents_profession  = "**1**- Farmer, fisherman/fisherwoman etc;\n**2**- Elderly caregiver, doorman/portress, salesperson etc;\n**3**- Baker, painter, electrician, driver etc;\n**4**- Professor, technician, police etc;\n**5**- Physician, engineer, judge, lawyer etc;\n**6**- Unknown."
 
-        groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
-                                        'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
-                                        'C' : 'Grupo 3: Padeiro, cozinheiro industrial ou em restaurantes, sapateiro, costureiro, joalheiro, torneiro mecânico, operador de máquinas, soldador, operário de fábrica, trabalhador da mineração, pedreiro, pintor, eletricista, encanador, motorista, caminhoneiro, taxista.',
-                                        'D' : 'Grupo 4: Professor (de ensino fundamental ou médio, idioma, música, artes etc.), técnico (de enfermagem, contabilidade, eletrônica etc.), policial, militar de baixa patente (soldado, cabo, sargento), corretor de imóveis, supervisor, gerente, mestre de obras, pastor, microempresário (proprietário de empresa com menos de 10 empregados), pequeno comerciante, pequeno proprietário de terras, trabalhador autônomo ou por conta própria.',
-                                        'E' : 'Grupo 5: Médico, engenheiro, dentista, psicólogo, economista, advogado, juiz, promotor, defensor, delegado, tenente, capitão, coronel, professor universitário, diretor em empresas públicas ou privadas, político, proprietário de empresas com mais de 10 empregados.',
-                                        'F' : 'Não sei.'}}
+        # groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
+        #                                 'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
+        #                                 'C' : 'Grupo 3: Padeiro, cozinheiro industrial ou em restaurantes, sapateiro, costureiro, joalheiro, torneiro mecânico, operador de máquinas, soldador, operário de fábrica, trabalhador da mineração, pedreiro, pintor, eletricista, encanador, motorista, caminhoneiro, taxista.',
+        #                                 'D' : 'Grupo 4: Professor (de ensino fundamental ou médio, idioma, música, artes etc.), técnico (de enfermagem, contabilidade, eletrônica etc.), policial, militar de baixa patente (soldado, cabo, sargento), corretor de imóveis, supervisor, gerente, mestre de obras, pastor, microempresário (proprietário de empresa com menos de 10 empregados), pequeno comerciante, pequeno proprietário de terras, trabalhador autônomo ou por conta própria.',
+        #                                 'E' : 'Grupo 5: Médico, engenheiro, dentista, psicólogo, economista, advogado, juiz, promotor, defensor, delegado, tenente, capitão, coronel, professor universitário, diretor em empresas públicas ou privadas, político, proprietário de empresas com mais de 10 empregados.',
+        #                                 'F' : 'Não sei.'}}
 
         for question in questions:     
             print(question)
-            # ddf_par[question] = ddf_par[question].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7})
             if (questions[0] == 'Q001' or questions[0] == 'Q002'):
                 ddf_par[question] = ddf_par[question].map({"H": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6, "F": 7, "G": 8})
             elif (questions[0] == 'Q003' or questions[0] == 'Q004'):
@@ -631,13 +630,12 @@ def our_plot(params, ddf_par, st):
             )
         )
         st.plotly_chart(fig, use_container_width=True)
-        print(dict_names_exams[questions[0]])
         if (questions[0] == 'Q001' or questions[0] == 'Q002'):
-            st.text(legend_education_level)
+            st.caption(legend_education_level)
         elif (questions[0] == 'Q003' or questions[0] == 'Q004'):
-            st.text(legend_parents_profession)
+            # st.text(legend_parents_profession)
+            st.caption(legend_parents_profession)
         # with st.container():
-            
 
     duration = fim(init)
     print(f"Duração: {duration}\n")
