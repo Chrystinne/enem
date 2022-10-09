@@ -5,7 +5,7 @@ import pandas as pd
 import dask.dataframe as dd
 import numpy as np
 from math import floor
-
+from PIL import Image
 import plotly.express as px
 import chart_studio.plotly as py
 import plotly.graph_objs as go
@@ -43,11 +43,13 @@ columns_to_grades_names = {item[1]: item[0] for item in grades_names_to_columns.
 
 factors = titles_and_graphs.keys()
 grades = grades_names_to_columns.keys()
+image = Image.open('../images/Logo_eduvizbr.png')
 
 # Top text area
 with st.container():
     # st.title("EduVizBR 📊")
-    st.title("EduVizBR")
+    # st.title("EduVizBR")
+    st.image(image, width=130)
 
 # column_1, column_2, column_3 = st.columns(3)
 (column_1, column_2, column_3), test_data = st.columns(3), False
@@ -278,18 +280,18 @@ def our_plot(params, ddf_par, st):
                 go.Scatter(x=filtro.estados, 
                            y=filtro.dif, 
                            hoverinfo='x+name+y',
-                           name='Difference',
-                           textfont=dict(color='black',
+                           name='Difference (Men - Women)',
+                           textfont=dict(color='#494c4e',
                                             family="Arial",
                                                     size=15),
                            text=filtro.dif.apply(lambda y: f"{y:.0f}"), 
-                           marker=dict(color='red'),
+                           marker=dict(color='#b2e061'),
                            mode='lines+markers+text',
                            textposition='top center')
                 ]
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='White')
         fig['layout']['xaxis']['titlefont'] = dict(size=14)
         fig['layout']['xaxis']['tickfont'] = dict(size=12)
         fig['layout']['yaxis']['titlefont'] = dict(size=14)
@@ -348,7 +350,7 @@ def our_plot(params, ddf_par, st):
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=80, family="Arial", color="black"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='White')
         fig['layout']['xaxis']['titlefont'] = dict(size=14)
         fig['layout']['xaxis']['tickfont'] = dict(size=12)
         fig['layout']['yaxis']['titlefont'] = dict(size=14)
@@ -430,7 +432,7 @@ def our_plot(params, ddf_par, st):
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"), 
             # legend=dict(yanchor="top", y=1.49, xanchor="left", x=0.01)
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='White')
         fig['layout']['xaxis']['titlefont'] = dict(size=14)
         fig['layout']['xaxis']['tickfont'] = dict(size=12)
         fig['layout']['yaxis']['titlefont'] = dict(size=14)
@@ -512,7 +514,7 @@ def our_plot(params, ddf_par, st):
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='White')
         fig['layout']['xaxis']['titlefont'] = dict(size=14)
         fig['layout']['xaxis']['tickfont'] = dict(size=12)
         fig['layout']['yaxis']['titlefont'] = dict(size=14)
