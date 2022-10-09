@@ -558,7 +558,7 @@ def our_plot(params, ddf_par, st):
                             
                             }
 
-        legend_education_level  = "0- No study\n1- Incomplete primary school\n2- Primary school\n3- Secondary school\n4- High school\n5- Graduated\n6- Post graduated\n7- Unknown"
+        legend_education_level  = "1- No study\n2- Incomplete primary school\n3- Primary school\n4- Secondary school\n5- High school\n6- Graduated\n7- Post graduated\n8- Unknown"
 
         groups_by_education_level = {'Q001': {
                                         'A' : 'No study',
@@ -571,7 +571,7 @@ def our_plot(params, ddf_par, st):
                                         'H' : 'Unknow'
                                     }}
 
-        legend_parents_profession  = "0- Farmer, fisherman/fisherwoman etc\n1- Elderly caregiver, doorman/portress, salesperson etc\n2- Baker, jeweler, painter, electrician, plumber, driver etc\n3- Professor, technician, police etc\n4- Physician, engineer, judge, lawyer etc\n5- Unknown"
+        legend_parents_profession  = "1- Farmer, fisherman/fisherwoman etc\n2- Elderly caregiver, doorman/portress, salesperson etc\n3- Baker, jeweler, painter, electrician, plumber, driver etc\n4- Professor, technician, police etc\n5- Physician, engineer, judge, lawyer etc\n6- Unknown"
 
         groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
                                         'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
@@ -582,7 +582,12 @@ def our_plot(params, ddf_par, st):
 
         for question in questions:     
             print(question)
-            ddf_par[question] = ddf_par[question].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7})
+            # ddf_par[question] = ddf_par[question].map({"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7})
+            if (questions[0] == 'Q001' or questions[0] == 'Q002'):
+                ddf_par[question] = ddf_par[question].map({"H": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6, "F": 7, "G": 8})
+            elif (questions[0] == 'Q003' or questions[0] == 'Q004'):
+                ddf_par[question] = ddf_par[question].map({"F": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6})
+            
         ddf_par = ddf_par.rename(columns=dict_names_exams)    
         # print(ddf_par[['Ciências da Natureza', 'Ciências Humanas', 'Linguagens e Códigos', 'Matemática']])
         question = dict_names_exams[questions[0]]
