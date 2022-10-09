@@ -19,13 +19,13 @@ st.set_page_config(layout="wide")
 
 titles_and_graphs = {
     # "Geographical belongingness": {"type": 'geo', "questions": ""},
+    "Marital status": {"title": "Marital_status", "type": "bar_marital_status"},
+    "Gender": {"title": "Gender", "type": "bar_gender"},
+    "Ethnicity": {"title": "Ethnicity", "type": "bar_ethnicity"},
     "Income": {"type": 'bar_income'},
     # "Age": {"type": 'bar_age'},
-    "Gender": {"title": "Gender", "type": "bar_gender"},
     # "Parents' education level": {"title": "Parents' education level", "type": "pyramid", "questions": ["Q001", "Q002"]},
     # "Parents' profession": {"title": "Parents' profession", "type": "pyramid", "questions": ["Q003", "Q004"]},
-    "Marital status": {"title": "Marital_status", "type": "bar_marital_status"},
-    "Ethnicity": {"title": "Ethnicity", "type": "bar_ethnicity"},
     "Father's education level": {"type": "parallel", "questions": ["Q001"]},
     "Mother's education level": {"type": "parallel", "questions": ["Q002"]},
     "Father's profession": {"type": "parallel", "questions": ["Q003"]},
@@ -52,7 +52,7 @@ with st.container():
 # column_1, column_2, column_3 = st.columns(3)
 (column_1, column_2, column_3), test_data = st.columns(3), False
 with column_1:
-    chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 2)
+    chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 0)
 with column_2:
     years = list(range(2015,2021))
     year = st.selectbox("Year", years, len(years)-1)
