@@ -560,7 +560,7 @@ def our_plot(params, ddf_par, st):
                             
                             }
 
-        legend_education_level  = "**1**- No study;\n**2**- Incomplete primary school;\n**3**- Primary school;\n**4**- Secondary school;\n**5**- High school;\n**6**- Graduated;\n**7**- Post graduated;\n**8**- Unknown."
+        legend_education_level  = "**1**- Unknown;\n**2**- No study;\n**3**- Incomplete primary school;\n**4**- Primary school;\n**5**- Secondary school;\n**6**- High school;\n**7**- Graduated;\n**8**- Post graduated."
 
         # groups_by_education_level = {'Q001': {
         #                                 'A' : 'No study',
@@ -573,7 +573,7 @@ def our_plot(params, ddf_par, st):
         #                                 'H' : 'Unknow'
         #                             }}
 
-        legend_parents_profession  = "**1**- Farmer, fisherman/fisherwoman etc;\n**2**- Elderly caregiver, doorman/portress, salesperson etc;\n**3**- Baker, painter, electrician, driver etc;\n**4**- Professor, technician, police etc;\n**5**- Physician, engineer, judge, lawyer etc;\n**6**- Unknown."
+        legend_parents_profession  = "**1**- Unknown;\n**2**- Farmer, fisherman/fisherwoman etc;\n**3**- Elderly caregiver, doorman/portress, salesperson etc;\n**4**- Baker, painter, electrician, driver etc;\n**5**- Professor, technician, police etc;\n**6**- Physician, engineer, judge, lawyer etc."
 
         # groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
         #                                 'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
