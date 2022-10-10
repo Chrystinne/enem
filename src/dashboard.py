@@ -43,15 +43,23 @@ columns_to_grades_names = {item[1]: item[0] for item in grades_names_to_columns.
 
 factors = titles_and_graphs.keys()
 grades = grades_names_to_columns.keys()
-image = Image.open('../images/Logo_eduvizbr.png')
+image = Image.open('../images/Logo15.png')
+
+col1, col2, col3 = st.columns([3.2,2,2])
+
+with col1:
+    st.write(' ')
+
+with col3:
+    st.write(' ')
 
 # Top text area
 with st.container():
     # st.title("EduVizBR 📊")
     # st.title("EduVizBR")
-    st.image(image, width=130)
+    with col2:
+        st.image(image, width=180)
 
-# column_1, column_2, column_3 = st.columns(3)
 (column_1, column_2, column_3), test_data = st.columns(3), False
 with column_1:
     chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 0)
@@ -254,7 +262,7 @@ def our_plot(params, ddf_par, st):
         layout = go.Layout(yaxis=go.layout.YAxis(title=f'Mean Grades of {grade} in {year}',),
                            xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550,
+                           bargap=0.25, width=1000, height=550,
                            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
         data_ = [go.Bar(y=filtro.men,
@@ -313,7 +321,7 @@ def our_plot(params, ddf_par, st):
                                                  ),
                            xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550,
+                           bargap=0.25, width=1000, height=550,
                            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
 
         data_ = [go.Bar(y=filtro.single,
@@ -374,7 +382,7 @@ def our_plot(params, ddf_par, st):
                                                  ),
                            xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550)
+                           bargap=0.25, width=1000, height=550)
         #paleta
         # "#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"
         data_ = [go.Bar(y=filtro.white,
@@ -457,7 +465,7 @@ def our_plot(params, ddf_par, st):
                                                  ),
                            xaxis=go.layout.XAxis(title="Brazilian States"),
                         #    barmode='overlay',
-                           bargap=0.1, width=1000, height=550)
+                           bargap=0.25, width=1000, height=550)
 
         data_ = [go.Bar(y=filtro.a_class,
                     x=filtro.estados,
@@ -562,25 +570,7 @@ def our_plot(params, ddf_par, st):
 
         legend_education_level  = "**1**- Unknown;\n**2**- No study;\n**3**- Incomplete primary school;\n**4**- Primary school;\n**5**- Secondary school;\n**6**- High school;\n**7**- Graduated;\n**8**- Post graduated."
 
-        # groups_by_education_level = {'Q001': {
-        #                                 'A' : 'No study',
-        #                                 'B' : 'Incomplete proimary school',
-        #                                 'C' : 'Primary school',
-        #                                 'D' : 'Secondary school',
-        #                                 'E' : 'High school',
-        #                                 'F' : 'Graduated',
-        #                                 'G' : 'Post graduated',
-        #                                 'H' : 'Unknow'
-        #                             }}
-
         legend_parents_profession  = "**1**- Unknown;\n**2**- Farmer, fisherman/fisherwoman etc;\n**3**- Elderly caregiver, doorman/portress, salesperson etc;\n**4**- Baker, painter, electrician, driver etc;\n**5**- Professor, technician, police etc;\n**6**- Physician, engineer, judge, lawyer etc."
-
-        # groups_by_question = {'Q003': {'A' : 'Grupo 1: Lavrador, agricultor sem empregados, bóia fria, criador de animais (gado, porcos, galinhas, ovelhas, cavalos etc.), apicultor, pescador, lenhador, seringueiro, extrativista.',
-        #                                 'B' : 'Grupo 2: Diarista, empregado doméstico, cuidador de idosos, babá, cozinheiro (em casas particulares), motorista particular, jardineiro, faxineiro de empresas e prédios, vigilante, porteiro, carteiro, office-boy, vendedor, caixa, atendente de loja, auxiliar administrativo, recepcionista, servente de pedreiro, repositor de mercadoria.',
-        #                                 'C' : 'Grupo 3: Padeiro, cozinheiro industrial ou em restaurantes, sapateiro, costureiro, joalheiro, torneiro mecânico, operador de máquinas, soldador, operário de fábrica, trabalhador da mineração, pedreiro, pintor, eletricista, encanador, motorista, caminhoneiro, taxista.',
-        #                                 'D' : 'Grupo 4: Professor (de ensino fundamental ou médio, idioma, música, artes etc.), técnico (de enfermagem, contabilidade, eletrônica etc.), policial, militar de baixa patente (soldado, cabo, sargento), corretor de imóveis, supervisor, gerente, mestre de obras, pastor, microempresário (proprietário de empresa com menos de 10 empregados), pequeno comerciante, pequeno proprietário de terras, trabalhador autônomo ou por conta própria.',
-        #                                 'E' : 'Grupo 5: Médico, engenheiro, dentista, psicólogo, economista, advogado, juiz, promotor, defensor, delegado, tenente, capitão, coronel, professor universitário, diretor em empresas públicas ou privadas, político, proprietário de empresas com mais de 10 empregados.',
-        #                                 'F' : 'Não sei.'}}
 
         for question in questions:     
             print(question)
@@ -590,7 +580,6 @@ def our_plot(params, ddf_par, st):
                 ddf_par[question] = ddf_par[question].map({"F": 1, "A": 2, "B": 3, "C": 4, "D": 5, "E": 6})
             
         ddf_par = ddf_par.rename(columns=dict_names_exams)    
-        # print(ddf_par[['Ciências da Natureza', 'Ciências Humanas', 'Linguagens e Códigos', 'Matemática']])
         question = dict_names_exams[questions[0]]
         print(question)
         cmax = ddf_par[question].max()#.compute()
@@ -617,10 +606,8 @@ def our_plot(params, ddf_par, st):
             # if column == question:
                 # item['tickvals'] = group_vals
                 # item['ticktext'] = group_names
-            # print(item) 
             dimensions.append(item)
             
-        
         fig = go.Figure(data=
             go.Parcoords(
                 line = dict(color = ddf_par[question],
@@ -635,9 +622,7 @@ def our_plot(params, ddf_par, st):
         if (questions[0] == 'Q001' or questions[0] == 'Q002'):
             st.caption(legend_education_level)
         elif (questions[0] == 'Q003' or questions[0] == 'Q004'):
-            # st.text(legend_parents_profession)
             st.caption(legend_parents_profession)
-        # with st.container():
 
     duration = fim(init)
     print(f"Duração: {duration}\n")
