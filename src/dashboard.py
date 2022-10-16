@@ -44,13 +44,19 @@ grades_names_to_columns = {"Mathematics": "NU_NOTA_MT",
                      "Nature Sciences": "NU_NOTA_CN",
                      "Essay": "NU_NOTA_REDACAO"}
 
-columns_to_grades_names = {item[1]: item[0] for item in grades_names_to_columns.items()}                     
+columns_to_grades_names = {item[1]: item[0] for item in grades_names_to_columns.items()}       
+
+grades_names_to_columns = {"Mathematics": "NU_NOTA_MT", 
+                     "Languages and Codes": "NU_NOTA_LC", 
+                     "Human Sciences": "NU_NOTA_CH", 
+                     "Nature Sciences": "NU_NOTA_CN",
+                     "Essay": "NU_NOTA_REDACAO"}
 
 factors = titles_and_graphs.keys()
 grades = grades_names_to_columns.keys()
 image = Image.open('../images/Logo15.png')
 
-col1, col2, col3 = st.columns([3.2,2,2])
+col1, col2, col3, col4 = st.columns([3.2,2,2,2])
 
 with col1:
     st.write(' ')
@@ -65,22 +71,26 @@ with st.container():
     with col2:
         st.image(image, width=180)
 
-(column_1, column_2, column_3), test_data = st.columns(3), False
+(column_1, column_2, column_3, column_4), test_data = st.columns(4), False
 with column_1:
     chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 0)
-with column_1:
-    show_statistical_test = st.checkbox('Show statiscal tests', False)
 with column_2:
     years = list(range(2015,2021))
     year = st.selectbox("Year", years, len(years)-1)
 with column_3:
     grade = st.selectbox("Grade", grades, len(grades)-1)
+with column_4:
+    brazilian_states = ['RS','PB','BA','AL','PA','TO','SP','CE','AM','SE','MG','MA','PI',
+                            'PE','MT','RJ','GO','RN','ES','AP','DF','SC','PR','RR','RO','MS','AC']
+    brazilian_state = st.selectbox("State", brazilian_states, len(brazilian_states)-1)
+    show_statistical_test = st.checkbox('Show statiscal tests', False)
 # with column_3:
 #     test_data = st.checkbox('Test Data', True)
 test = '_test' if test_data else ''
 
 print(f"Year: {year}")
-print(f"Test data: {test_data}")
+# print(f"Test data: {test_data}")
+print(f"Brazilian state: {brazilian_state}")
 
 # Get 2015 data
 @st.cache()
@@ -183,21 +193,23 @@ def results_ranksum_per_state(data, state, course):
     test_result= f'[p_value: {p} , test: {test}]' 
     st.text(test_result)
     
-
 def plot_distribution_ranksum_per_state(data, state, course):
     print(state)
     ploting_distribution_female_male_per_state(data, state, course)
     results_ranksum_per_state(data, state, course)
 
 def plot_distribution_ranksum_all_states(data, states, course):
-    for state in states[:5]:
+    for state in states:
         print(state)
         ploting_distribution_female_male_per_state(data, state, course)
         results_ranksum_per_state(data, state, course)
         
-def plot_statistical_tests(data, course):
+def plot_statistical_tests_all_states(data, course):
     states = list(data['SG_UF_RESIDENCIA'].unique())
     plot_distribution_ranksum_all_states(data, states, course)
+
+def plot_statistical_tests_per_state(data, brazilian_state, course):
+    plot_distribution_ranksum_per_state(data, brazilian_state, course)
 
 def our_plot(params, ddf_par, st):
     """ return plotly plots """
@@ -697,4 +709,4 @@ with st.container():
         # results_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
         # plot_distribution_ranksum_all_states(ddf, list(ddf['SG_UF_RESIDENCIA'].unique()), 'NU_NOTA_MT')
         # plot_distribution_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
-        plot_statistical_tests(ddf, 'NU_NOTA_MT')
+        plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
