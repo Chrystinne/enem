@@ -161,6 +161,12 @@ def graficoSexo(data):
         labels = ['F', 'M'],
         texttemplate = "%{label}: %{value:,s} <br>(%{percent})",
         ))
+    fig.update_layout(
+        title=f'Students {chart_type} in {year}', # title of plot
+        font=dict(
+            size=13,
+        )
+    )
     fig.update_traces(marker=dict(colors=colors))   
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     st.plotly_chart(fig, use_container_width=True)
@@ -179,10 +185,11 @@ def graficoSexo(data):
 #     fig.show()
 
 def ploting_distribution_female_male_per_state(data, state, course):
+    colors = ['#fd7f6f', '#7eb0d5']
     df = data[data['SG_UF_RESIDENCIA'] == state]
-    fig = px.histogram(df, x=df[course], color=df['TP_SEXO'])
+    fig = px.histogram(df, x=df[course], color=df['TP_SEXO'], color_discrete_sequence=colors)
     # Reduce opacity to see both histograms
-    fig.update_traces(opacity=0.75)
+    fig.update_traces(opacity=0.7)
     fig.update_layout(
         barmode='overlay',
         title_text=f'{state} - Grades of {grade} in {year}', # title of plot
