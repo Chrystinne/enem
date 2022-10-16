@@ -155,15 +155,15 @@ else:
     ddf = load_2020_data()
 
 def graficoSexo(data):
+    colors = ['#fd7f6f', '#7eb0d5']
     fig = go.Figure(go.Pie(
         values = data['TP_SEXO'].value_counts().compute().sort_index(),
         labels = ['F', 'M'],
-        texttemplate = "%{label}: %{value:$,s} <br>(%{percent})",
-        # colors = ['#fd7f6f', '#7eb0d5']
-        # ,textposition = "inside"
+        texttemplate = "%{label}: %{value:,s} <br>(%{percent})",
         ))
-    fig.update_layout(legend=dict(yanchor="top", y=1.49, xanchor="left", x=0.01))
-    fig.show()
+    fig.update_traces(marker=dict(colors=colors))   
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    st.plotly_chart(fig, use_container_width=True)
 
 # def ploting_distribution_female_male_per_state_old(data, state, course):
 #     mulher = data[(data['TP_SEXO'] == 'F') & (data['SG_UF_RESIDENCIA'] == state)]
@@ -187,7 +187,8 @@ def ploting_distribution_female_male_per_state(data, state, course):
         barmode='overlay',
         title_text=f'{state} - Grades of {grade} in {year}', # title of plot
         xaxis_title_text=f'Grades of {grade} in {year}', # xaxis label
-        yaxis_title_text='Frequency' # yaxis label
+        yaxis_title_text='Frequency', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
     st.plotly_chart(fig, use_container_width=True)
     # fig.show()
@@ -381,7 +382,7 @@ def our_plot(params, ddf_par, st):
         st.plotly_chart(fig, use_container_width=True)
 
         if show_statistical_test:
-            # graficoSexo(ddf)
+            graficoSexo(ddf)
             plot_statistical_tests_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
             # print(grades_names_to_columns[grade])
 
