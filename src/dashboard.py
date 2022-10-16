@@ -181,9 +181,14 @@ def graficoSexo(data):
 def ploting_distribution_female_male_per_state(data, state, course):
     df = data[data['SG_UF_RESIDENCIA'] == state]
     fig = px.histogram(df, x=df[course], color=df['TP_SEXO'])
-    fig.update_layout(barmode='overlay')
     # Reduce opacity to see both histograms
     fig.update_traces(opacity=0.75)
+    fig.update_layout(
+        barmode='overlay',
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text=f'Grades of {grade} in {year}', # xaxis label
+        yaxis_title_text='Frequency' # yaxis label
+    )
     st.plotly_chart(fig, use_container_width=True)
     # fig.show()
 
@@ -377,7 +382,8 @@ def our_plot(params, ddf_par, st):
 
         if show_statistical_test:
             # graficoSexo(ddf)
-            plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
+            plot_statistical_tests_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
+            # print(grades_names_to_columns[grade])
 
     elif params["type"] == "bar_marital_status":
 
