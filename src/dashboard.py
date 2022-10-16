@@ -213,7 +213,10 @@ def plot_statistical_tests_all_states(data, course):
     plot_distribution_ranksum_all_states(data, states, course)
 
 def plot_statistical_tests_per_state(data, brazilian_state, course):
-    plot_distribution_ranksum_per_state(data, brazilian_state, course)
+    if brazilian_state == 'ALL STATES':
+        plot_distribution_ranksum_all_states(data, list(ddf['SG_UF_RESIDENCIA'].unique()), course)
+    else:
+        plot_distribution_ranksum_per_state(data, brazilian_state, course)
 
 def our_plot(params, ddf_par, st):
     """ return plotly plots """
@@ -382,6 +385,10 @@ def our_plot(params, ddf_par, st):
         fig['layout']['yaxis']['tickfont'] = dict(size=12)
         fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
+
+        if show_statistical_test:
+            # graficoSexo(ddf)
+            plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
 
     elif params["type"] == "bar_marital_status":
 
@@ -706,11 +713,7 @@ def our_plot(params, ddf_par, st):
 with st.container():
     plot = our_plot(titles_and_graphs[chart_type], ddf, st)
 
-    if show_statistical_test:
+    # if show_statistical_test:
         # st.text('Show test results.....')
         # graficoSexo(ddf)
-        # plot_statistical_tests(ddf, 'NU_NOTA_MT')
-        # results_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
-        # plot_distribution_ranksum_all_states(ddf, list(ddf['SG_UF_RESIDENCIA'].unique()), 'NU_NOTA_MT')
-        # plot_distribution_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
-        plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
+        # plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
