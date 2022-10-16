@@ -9,7 +9,12 @@ from PIL import Image
 import plotly.express as px
 import chart_studio.plotly as py
 import plotly.graph_objs as go
-
+from turtle import color
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import ranksums
+from plotly.subplots import make_subplots
+from plotly.offline import plot
 # import leafmap.foliumap as leafmap
 
 from tempo import inicio, fim
@@ -63,13 +68,13 @@ with st.container():
 (column_1, column_2, column_3), test_data = st.columns(3), False
 with column_1:
     chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 0)
+with column_1:
+    show_statistical_test = st.checkbox('Show statiscal tests', False)
 with column_2:
     years = list(range(2015,2021))
     year = st.selectbox("Year", years, len(years)-1)
 with column_3:
     grade = st.selectbox("Grade", grades, len(grades)-1)
-# with column_3:
-#     test_data = st.checkbox('Test Data', True)
 # with column_3:
 #     test_data = st.checkbox('Test Data', True)
 test = '_test' if test_data else ''
@@ -135,10 +140,70 @@ elif year == 2015:
 else:
     ddf = load_2020_data()
 
+def graficoSexo(data):
+    fig = go.Figure(go.Pie(
+        values = data['TP_SEXO'].value_counts().compute().sort_index(),
+        labels = ['F', 'M'],
+        texttemplate = "%{label}: %{value:$,s} <br>(%{percent})",
+        # colors = ['#fd7f6f', '#7eb0d5']
+        # ,textposition = "inside"
+        ))
+    fig.update_layout(legend=dict(yanchor="top", y=1.49, xanchor="left", x=0.01))
+    fig.show()
+
+# def ploting_distribution_female_male_per_state_old(data, state, course):
+#     mulher = data[(data['TP_SEXO'] == 'F') & (data['SG_UF_RESIDENCIA'] == state)]
+#     homem = data[(data['TP_SEXO'] == 'M') & (data['SG_UF_RESIDENCIA'] == state)]
+
+#     fig = go.Figure()
+#     fig.add_trace(go.Histogram(x=mulher[course]))
+#     fig.add_trace(go.Histogram(x=homem[course]))
+
+#     fig.update_layout(barmode='overlay')
+#     # Reduce opacity to see both histograms
+#     fig.update_traces(opacity=0.75)
+#     fig.show()
+
+def ploting_distribution_female_male_per_state(data, state, course):
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+    fig = px.histogram(df, x=df[course], color=df['TP_SEXO'])
+    fig.update_layout(barmode='overlay')
+    # Reduce opacity to see both histograms
+    fig.update_traces(opacity=0.75)
+    st.plotly_chart(fig, use_container_width=True)
+    # fig.show()
+
+def results_ranksum_per_state(data, state, course):
+    mulher = data[(data['TP_SEXO'] == 'F')]
+    homem = data[(data['TP_SEXO'] == 'M')]
+    dataset_women = mulher[mulher['SG_UF_RESIDENCIA'] == state]
+    dataset_man = homem[homem['SG_UF_RESIDENCIA'] == state]
+    test, p = ranksums(dataset_women[course], dataset_man[course])
+    print(f'p:', p, f'test:', test)
+    test_result= f'[p_value: {p} , test: {test}]' 
+    st.text(test_result)
+    
+
+def plot_distribution_ranksum_per_state(data, state, course):
+    print(state)
+    ploting_distribution_female_male_per_state(data, state, course)
+    results_ranksum_per_state(data, state, course)
+
+def plot_distribution_ranksum_all_states(data, states, course):
+    for state in states[:5]:
+        print(state)
+        ploting_distribution_female_male_per_state(data, state, course)
+        results_ranksum_per_state(data, state, course)
+        
+def plot_statistical_tests(data, course):
+    states = list(data['SG_UF_RESIDENCIA'].unique())
+    plot_distribution_ranksum_all_states(data, states, course)
+
 def our_plot(params, ddf_par, st):
     """ return plotly plots """
 
     init = inicio()
+                
     if params["type"] == "geo":
         st.title('Geographical belongingness')
 
@@ -180,11 +245,6 @@ def our_plot(params, ddf_par, st):
         )
         m.to_streamlit(width=700, height=1000)
         # display data
-        # with st.container():
-        #     show_data = st.checkbox("See the raw data?")
-
-        #     if show_data:
-        #         ddf
 
     elif params["type"] == "pyramid":
 
@@ -273,7 +333,7 @@ def our_plot(params, ddf_par, st):
                     marker=dict(color='#7eb0d5'),
                     textfont=dict(family="Arial",
                                   size=15),
-                    textposition='outside'
+                    textposition='outside',
                     ),
                 go.Bar(y=filtro.women,
                     x=filtro.estados,
@@ -629,3 +689,12 @@ def our_plot(params, ddf_par, st):
 
 with st.container():
     plot = our_plot(titles_and_graphs[chart_type], ddf, st)
+
+    if show_statistical_test:
+        # st.text('Show test results.....')
+        # graficoSexo(ddf)
+        # plot_statistical_tests(ddf, 'NU_NOTA_MT')
+        # results_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
+        # plot_distribution_ranksum_all_states(ddf, list(ddf['SG_UF_RESIDENCIA'].unique()), 'NU_NOTA_MT')
+        # plot_distribution_ranksum_per_state(ddf, 'PB', 'NU_NOTA_MT')
+        plot_statistical_tests(ddf, 'NU_NOTA_MT')
