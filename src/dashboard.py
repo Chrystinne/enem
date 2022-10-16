@@ -364,17 +364,6 @@ def our_plot(params, ddf_par, st):
                                   size=15),
                     textposition='outside'
                     ),
-                go.Scatter(x=filtro.estados, 
-                           y=filtro.dif, 
-                           hoverinfo='x+name+y',
-                           name='Difference (Men - Women)',
-                           textfont=dict(color='#494c4e',
-                                            family="Arial",
-                                                    size=15),
-                           text=filtro.dif.apply(lambda y: f"{y:.0f}"), 
-                           marker=dict(color='#b2e061'),
-                           mode='lines+markers+text',
-                           textposition='top center')
                 ]
         fig = go.Figure(data=data_, layout=layout)
         fig.update_layout(barmode='group', font=dict(size=10, family="Arial", color="black"))
