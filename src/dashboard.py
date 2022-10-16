@@ -85,8 +85,8 @@ with column_3:
     grade = st.selectbox("Grade", grades, len(grades)-1)
 with column_4:
     brazilian_states = ['RS','PB','BA','AL','PA','TO','SP','CE','AM','SE','MG','MA','PI',
-                            'PE','MT','RJ','GO','RN','ES','AP','DF','SC','PR','RR','RO','MS','AC']
-    brazilian_state = st.selectbox("State", brazilian_states, len(brazilian_states)-1)
+                            'PE','MT','RJ','GO','RN','ES','AP','DF','SC','PR','RR','RO','MS','AC','ALL STATES']
+    brazilian_state = st.selectbox("State", brazilian_states, 0)
     show_statistical_test = st.checkbox('Show statiscal tests', False)
 # with column_3:
 #     test_data = st.checkbox('Test Data', True)
