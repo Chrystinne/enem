@@ -56,19 +56,23 @@ factors = titles_and_graphs.keys()
 grades = grades_names_to_columns.keys()
 image = Image.open('../images/Logo15.png')
 
-col1, col2, col3, col4 = st.columns([3.2,2,2,2])
+col1, col2, col3, col4 = st.columns([2,0.87,2,2])
 
 with col1:
     st.write(' ')
 
+with col2:
+    st.write('  ')
+
 with col3:
+    st.write(' ')
+
+with col4:
     st.write(' ')
 
 # Top text area
 with st.container():
-    # st.title("EduVizBR 📊")
-    # st.title("EduVizBR")
-    with col2:
+    with col3:
         st.image(image, width=180)
 
 (column_1, column_2, column_3, column_4), test_data = st.columns(4), False
