@@ -184,6 +184,24 @@ def graficoSexo(data):
 #     fig.update_traces(opacity=0.75)
 #     fig.show()
 
+def ploting_boxplot_gender_per_state(data, state, course):
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+    mulher = df[(df['TP_SEXO'] == 'F')]
+    homem = df[(df['TP_SEXO'] == 'M')]
+
+    colors = ['#fd7f6f', '#7eb0d5']
+    fig = px.box(df, x=df[course])
+    fig = go.Figure()
+    fig.add_trace(go.Box(y=mulher[course], name="Women", marker_color = '#fd7f6f'))
+    fig.add_trace(go.Box(y=homem[course], name="Men", marker_color = '#7eb0d5'))
+    fig.update_layout(
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text='Gender', # xaxis label
+        yaxis_title_text=f'Grades of {grade}', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
 def ploting_distribution_female_male_per_state(data, state, course):
     colors = ['#fd7f6f', '#7eb0d5']
     df = data[data['SG_UF_RESIDENCIA'] == state]
@@ -391,6 +409,7 @@ def our_plot(params, ddf_par, st):
         if show_statistical_test:
             graficoSexo(ddf)
             plot_statistical_tests_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
+            ploting_boxplot_gender_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
             # print(grades_names_to_columns[grade])
 
     elif params["type"] == "bar_marital_status":
