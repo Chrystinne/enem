@@ -138,7 +138,6 @@ def load_2020_data():
     path = f'../datasets/integrated_datas_2020{test}.parquet.gzip'
     return dd.read_parquet(path, ignore_metadata_file=True)#, columns=cols_used)
 
-
 if year == 2020:
     ddf = load_2020_data()
 elif year == 2019:
@@ -734,8 +733,3 @@ def our_plot(params, ddf_par, st):
 
 with st.container():
     plot = our_plot(titles_and_graphs[chart_type], ddf, st)
-
-    # if show_statistical_test:
-        # st.text('Show test results.....')
-        # graficoSexo(ddf)
-        # plot_statistical_tests_per_state(ddf, brazilian_state, 'NU_NOTA_MT')
