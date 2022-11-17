@@ -15,6 +15,7 @@ import seaborn as sns
 from scipy.stats import ranksums
 from plotly.subplots import make_subplots
 from plotly.offline import plot
+from scipy import stats
 # import leafmap.foliumap as leafmap
 
 from tempo import inicio, fim
@@ -77,7 +78,7 @@ with st.container():
 
 (column_1, column_2, column_3, column_4), test_data = st.columns(4), False
 with column_1:
-    chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 0)
+    chart_type = st.selectbox("Choose the factor you would like to analyse", factors, 2)
 with column_2:
     years = list(range(2015,2021))
     year = st.selectbox("Year", years, len(years)-1)
@@ -87,7 +88,7 @@ with column_4:
     brazilian_states = ['RS','PB','BA','AL','PA','TO','SP','CE','AM','SE','MG','MA','PI',
                             'PE','MT','RJ','GO','RN','ES','AP','DF','SC','PR','RR','RO','MS','AC','ALL STATES']
     brazilian_state = st.selectbox("State", brazilian_states, 0)
-    show_statistical_test = st.checkbox('Show statiscal tests', False)
+    show_statistical_test = st.checkbox('Show statiscal tests', True)
 # with column_3:
 #     test_data = st.checkbox('Test Data', True)
 test = '_test' if test_data else ''
@@ -153,8 +154,26 @@ elif year == 2015:
 else:
     ddf = load_2020_data()
 
+def replace_ethnicity(value):
+    if value == 1:
+        return "White"
+    elif value == 2:
+        return "Black"
+    elif value == 3:
+        return "Brown"
+    elif value == 4:
+        return "Yellow"
+    elif value == 5:
+        return "Indigenous"
+
+def transform_data_ethnicty(df):
+    # df['TP_COR_RACA'].value_counts().compute()
+    df['TP_COR_RACA'] = df.TP_COR_RACA.apply(replace_ethnicity)
+    return df 
+
 def graficoSexo(data):
     colors = ['#fd7f6f', '#7eb0d5']
+    print(data['TP_SEXO'].value_counts().compute().sort_index())
     fig = go.Figure(go.Pie(
         values = data['TP_SEXO'].value_counts().compute().sort_index(),
         labels = ['F', 'M'],
@@ -170,19 +189,197 @@ def graficoSexo(data):
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     st.plotly_chart(fig, use_container_width=True)
 
-# def ploting_distribution_female_male_per_state_old(data, state, course):
-#     mulher = data[(data['TP_SEXO'] == 'F') & (data['SG_UF_RESIDENCIA'] == state)]
-#     homem = data[(data['TP_SEXO'] == 'M') & (data['SG_UF_RESIDENCIA'] == state)]
+def return_grade_name(grade):
+    dict_names_exams = {'NU_NOTA_CN' : 'Ciências da Natureza',
+                            'NU_NOTA_CH' : 'Ciências Humanas',
+                            'NU_NOTA_LC' : 'Linguagens e Códigos',
+                            'NU_NOTA_MT' : 'Matemática',
+                            'NU_NOTA_REDACAO' : 'Redação',
+                            'NU_NOTA_SUM' : 'Soma das Notas',
+                        }
+    return dict_names_exams[grade]
 
-#     fig = go.Figure()
-#     fig.add_trace(go.Histogram(x=mulher[course]))
-#     fig.add_trace(go.Histogram(x=homem[course]))
+# Ethnicity
 
-#     fig.update_layout(barmode='overlay')
-#     # Reduce opacity to see both histograms
-#     fig.update_traces(opacity=0.75)
-#     fig.show()
+def graphEthnicity(data):
 
+    df = transform_data_ethnicty(data)
+
+    colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    print(df['TP_COR_RACA'].value_counts().compute().sort_index())
+    fig = go.Figure(go.Pie(
+        values = df['TP_COR_RACA'].value_counts().compute().sort_index(),
+        # labels = ['Black', 'White', 'Brown', 'Yellow', 'Indigenous'],
+        texttemplate = "%{label}: %{value:,s} <br>(%{percent})",
+        ))
+    fig.update_layout(
+        title=f'Students {chart_type} in {year}', # title of plot
+        font=dict(
+            size=13,
+        )
+    )
+    fig.update_traces(marker=dict(colors=colors))   
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def ploting_boxplot_ethnicity_per_state(data, state, course):
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+
+    black = df[(df['TP_COR_RACA'] == 2)]
+    white = df[(df['TP_COR_RACA'] == 1)]
+    brown = df[(df['TP_COR_RACA'] == 3)]
+    yellow = df[(df['TP_COR_RACA'] == 4)]
+    indigenous = df[(df['TP_COR_RACA'] == 5)]
+
+    colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    fig = px.box(df, x=df[course])
+    fig = go.Figure()
+    fig.add_trace(go.Box(y=black[course], name="Black", marker_color = '#fd7f6f'))
+    fig.add_trace(go.Box(y=white[course], name="White", marker_color = '#7eb0d5'))
+    fig.add_trace(go.Box(y=brown[course], name="Brown", marker_color = '#b2e061'))
+    fig.add_trace(go.Box(y=yellow[course], name="Yellow", marker_color = '#bd7ebe'))
+    fig.add_trace(go.Box(y=indigenous[course], name="Indigenous", marker_color = '#ffb55a'))
+    fig.update_layout(
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text='Gender', # xaxis label
+        yaxis_title_text=f'Grades of {grade}', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def replace_ethnicity(value):
+    if value == 1:
+        return "White"
+    elif value == 2:
+        return "Black"
+    elif value == 3:
+        return "Brown"
+    elif value == 4:
+        return "Yellow"
+    elif value == 5:
+        return "Indigenous"
+
+def perform_kruskal_wallis_per_state(data, state, course, factor):
+    # data['TP_COR_RACA'] = data.TP_COR_RACA.apply(replace_ethnicity)
+
+    black = data[(data[factor] == 2)]
+    white = data[(data[factor] == 1)]
+    brown = data[(data[factor] == 3)]
+    yellow = data[(data[factor] == 4)]
+    indigenous = data[(data[factor] == 5)]
+
+    return stats.kruskal(black[black['SG_UF_RESIDENCIA'] == state][course], 
+    white[white['SG_UF_RESIDENCIA'] == state][course], brown[brown['SG_UF_RESIDENCIA'] == state][course], 
+    yellow[yellow['SG_UF_RESIDENCIA'] == state][course], indigenous[indigenous['SG_UF_RESIDENCIA'] == state][course])
+
+
+def results_kruskal_wallis_per_state(data, state, course, factor): 
+
+    result = perform_kruskal_wallis_per_state(data, state, course, factor)
+    print(result)
+    
+    # Interpreting the results:
+
+    # The Kruskal-Wallis Test uses the following null and alternative hypotheses:
+
+    # The null hypothesis (H0): The median score in math is equal across all ethnicty groups.
+
+    # The alternative hypothesis: (Ha): The median score in math is not equal across all ethnicty groups.
+
+    # In this case, the test statistic is 7749.868515864906 and the corresponding p-value is 0.0. Since 
+    # this p-value is less than 0.05, we can reject the null hypothesis that the median score in math is the 
+    # same for all five ethnicity groups. We have sufficient evidence to conclude that the ethnicity leads 
+    # to statistically significant differences in median scores in math for the ENEM exam.
+    
+    course_name = return_grade_name(course)
+
+    start = f'''Interpreting the results for the statiscal tests Kruskal-Wallis (comparing {course_name} for {factor} in {state}):\n 
+        We defined the following null hypothesis (H0) and alternative hypothesis (HA):\n
+            - H0: The median score in {course_name} is equal across all {factor} groups.\n
+            - HA: The median score in {course_name} is not equal across all {factor} groups.\n
+        (The test statistic is {result[0]} and the corresponding p-value is {result[1]}.)\n
+    '''
+
+    result_p = ""
+
+    if result[1] < 0.05:
+        result_p = f'''
+        We can reject the null hypothesis that the median score in {course_name} is the same for all five {factor} groups. 
+        We have sufficient evidence to conclude that the {factor} leads to 
+        statistically significant differences in median scores in {course_name} for the ENEM exam.
+        '''
+    else: 
+        result_p = f'''
+        We can accept the null hypothesis that the median score in {course_name} is the same for all five {factor} groups. 
+        We have sufficient evidence to conclude that the {factor} leads to 
+        no statistically significant differences in median scores in {course_name} for the ENEM exam.
+        '''
+    test_result= f'{start}{result_p}' 
+    st.text(test_result)
+
+def ploting_distribution_race_per_state(data, state, course):
+    print('ploting_distribution_race_per_state')
+
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+
+    black = df[(df['TP_COR_RACA'] == 2)]
+    white = df[(df['TP_COR_RACA'] == 1)]
+    brown = df[(df['TP_COR_RACA'] == 3)]
+    yellow = df[(df['TP_COR_RACA'] == 4)]
+    indigenous = df[(df['TP_COR_RACA'] == 5)]
+
+    colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    fig = px.box(df, x=df[course])
+    fig = go.Figure()
+    fig.add_trace(go.histogram(y=black[course], name="Black", marker_color = '#fd7f6f'))
+    fig.add_trace(go.histogram(y=white[course], name="White", marker_color = '#7eb0d5'))
+    fig.add_trace(go.histogram(y=brown[course], name="Brown", marker_color = '#b2e061'))
+    fig.add_trace(go.histogram(y=yellow[course], name="Yellow", marker_color = '#bd7ebe'))
+    fig.add_trace(go.histogram(y=indigenous[course], name="Indigenous", marker_color = '#ffb55a'))
+    fig.update_layout(
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text='Gender', # xaxis label
+        yaxis_title_text=f'Grades of {grade}', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_distribution_kruskal_wallis_per_state(data, state, course, factor):
+    print(state)
+    # ploting_distribution_race_per_state(data, state, course)
+    results_kruskal_wallis_per_state(data, state, course, factor)
+    # perform_kruskal_wallis_per_state(data, state, course)
+
+def plot_distribution_kruskal_wallis_all_states(data, states, course):
+    for state in states:
+        print(state)
+        plot_distribution_kruskal_wallis_per_state(data, state, course)
+        # results_kruskal_wallis_per_state(data, state, course)
+
+def plot_statistical_tests_n_variables_all_states(data, course):
+    states = list(data['SG_UF_RESIDENCIA'].unique())
+    plot_distribution_ranksum_all_states(data, states, course)
+
+def plot_statistical_tests_n_variables_per_state(data, brazilian_state, course):
+    print('plot_statistical_tests_n_variables_per_state')
+    # df = transform_data_ethnicty(data)
+    if brazilian_state == 'ALL STATES':
+        plot_distribution_kruskal_wallis_all_states(data, list(ddf['SG_UF_RESIDENCIA'].unique()), course)
+    else:
+        plot_distribution_kruskal_wallis_per_state(data, brazilian_state, course)
+
+def plot_statistical_tests_n_variables_per_state2(data, brazilian_state, course, factor):
+    print('plot_statistical_tests_n_variables_per_state 2')
+    # df = transform_data_ethnicty(data)
+    if brazilian_state == 'ALL STATES':
+        plot_distribution_kruskal_wallis_all_states(data, list(ddf['SG_UF_RESIDENCIA'].unique()), course, factors)
+    else:
+        plot_distribution_kruskal_wallis_per_state(data, brazilian_state, course, factor)
+
+
+
+# Gender
 def ploting_boxplot_gender_per_state(data, state, course):
     df = data[data['SG_UF_RESIDENCIA'] == state]
     mulher = df[(df['TP_SEXO'] == 'F')]
@@ -217,26 +414,41 @@ def ploting_distribution_female_male_per_state(data, state, course):
     st.plotly_chart(fig, use_container_width=True)
     # fig.show()
 
-def results_ranksum_per_state(data, state, course):
+def results_ranksum_gender_per_state(data, state, course):
     mulher = data[(data['TP_SEXO'] == 'F')]
     homem = data[(data['TP_SEXO'] == 'M')]
     dataset_women = mulher[mulher['SG_UF_RESIDENCIA'] == state]
     dataset_man = homem[homem['SG_UF_RESIDENCIA'] == state]
     test, p = ranksums(dataset_women[course], dataset_man[course])
     print(f'p:', p, f'test:', test)
-    test_result= f'[p_value: {p} , test: {test}]' 
+    # O p_value nesse caso eh bem menor que 0,05, o que significa que existe 
+    # uma diferenca estatisticamente significativa e ela eh apresentada dentro do IC de 0,28 e 0,56 
+    # nas medias desses grupos, nas distribuicoes desses dados. 
+    result_p = ""
+    course_name = return_grade_name(course)
+    if p < 0.05:
+        result_p = f'There is a statistically significant difference between women and men scores for {course_name}.'
+    else: 
+        result_p = f'There is a no statistically significant difference between women and men scores for {course_name}.'
+    result_test = ""
+    if test < 0:
+        result_test = f'Men score better than women in {course_name}.'
+    else:
+        result_test = f'Women score better than men in {course_name}.'
+    # test_result= f'[p_value: {result_p} , test: {result_test}]'
+    test_result= f'{result_p} {result_test}' 
     st.text(test_result)
     
 def plot_distribution_ranksum_per_state(data, state, course):
     print(state)
     ploting_distribution_female_male_per_state(data, state, course)
-    results_ranksum_per_state(data, state, course)
+    results_ranksum_gender_per_state(data, state, course)
 
 def plot_distribution_ranksum_all_states(data, states, course):
     for state in states:
         print(state)
         ploting_distribution_female_male_per_state(data, state, course)
-        results_ranksum_per_state(data, state, course)
+        results_ranksum_gender_per_state(data, state, course)
         
 def plot_statistical_tests_all_states(data, course):
     states = list(data['SG_UF_RESIDENCIA'].unique())
@@ -408,7 +620,7 @@ def our_plot(params, ddf_par, st):
         if show_statistical_test:
             graficoSexo(ddf)
             plot_statistical_tests_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
-            ploting_boxplot_gender_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
+            # ploting_boxplot_gender_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
             # print(grades_names_to_columns[grade])
 
     elif params["type"] == "bar_marital_status":
@@ -469,6 +681,12 @@ def our_plot(params, ddf_par, st):
         fig['layout']['yaxis']['tickfont'] = dict(size=12)
         fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
+
+        if show_statistical_test:
+            # graphEthnicity(ddf)
+            plot_statistical_tests_n_variables_per_state2(ddf, brazilian_state, grades_names_to_columns[grade], 'TP_ESTADO_CIVIL')
+            # ploting_boxplot_ethnicity_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
+
 
     elif params["type"] == "bar_ethnicity":
 
@@ -552,6 +770,11 @@ def our_plot(params, ddf_par, st):
         fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
 
+        if show_statistical_test:
+            # graphEthnicity(ddf)
+            plot_statistical_tests_n_variables_per_state2(ddf, brazilian_state, grades_names_to_columns[grade], 'TP_COR_RACA')
+            # ploting_boxplot_ethnicity_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
+
     elif params["type"] == "bar_income":
 
         filtro = ddf_par.groupby(['SG_UF_RESIDENCIA', 'TP_SES_INCOME'])[grades_names_to_columns[grade]].mean().reset_index().compute()
@@ -633,6 +856,11 @@ def our_plot(params, ddf_par, st):
         fig['layout']['yaxis']['tickfont'] = dict(size=12)
         fig['layout']['legend']['font'] = dict(size=12)
         st.plotly_chart(fig, use_container_width=True)
+        
+        if show_statistical_test:
+            # graphEthnicity(ddf)
+            plot_statistical_tests_n_variables_per_state2(ddf, brazilian_state, grades_names_to_columns[grade], 'TP_SES_INCOME')
+            # ploting_boxplot_ethnicity_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
 
     elif params["type"] == "parallel":
         
