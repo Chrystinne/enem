@@ -351,6 +351,157 @@ def plot_statistical_tests_n_variables_ses_per_state2(data, brazilian_state, cou
         plot_distribution_kruskal_wallis_ses_per_state(data, brazilian_state, course, factor)
 
 
+# MARITAL STATUS
+
+# def graph_marital_status(data):
+
+    # df = transform_data_ethnicty(data)
+
+    # colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    # print(df['TP_COR_RACA'].value_counts().compute().sort_index())
+    # fig = go.Figure(go.Pie(
+    #     values = df['TP_COR_RACA'].value_counts().compute().sort_index(),
+    #     # labels = ['Black', 'White', 'Brown', 'Yellow', 'Indigenous'],
+    #     texttemplate = "%{label}: %{value:,s} <br>(%{percent})",
+    #     ))
+    # fig.update_layout(
+    #     title=f'Students {chart_type} in {year}', # title of plot
+    #     font=dict(
+    #         size=13,
+    #     )
+    # )
+    # fig.update_traces(marker=dict(colors=colors))   
+    # fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    # st.plotly_chart(fig, use_container_width=True)
+
+def replace_status(value):
+    if value == 1:
+        return "Single"
+    elif value == 2:
+        return "Married"
+    elif value == 3:
+        return "Divorced/Separated"
+
+def ploting_boxplot_marital_status_per_state(data, state, course):
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+
+    single = data[(data['TP_ESTADO_CIVIL'] == 'Single')]
+    married = data[(data['TP_ESTADO_CIVIL'] == 'Married')]
+    divorced = data[(data['TP_ESTADO_CIVIL'] == 'Divorced/Separated')]
+
+    colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    fig = px.box(df, x=df[course])
+    fig = go.Figure()
+    fig.add_trace(go.Box(y=single[course], name="Single", marker_color = '#fd7f6f'))
+    fig.add_trace(go.Box(y=married[course], name="Married", marker_color = '#7eb0d5'))
+    fig.add_trace(go.Box(y=divorced[course], name="Divorced", marker_color = '#b2e061'))
+    fig.update_layout(
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text='Marital Status', # xaxis label
+        yaxis_title_text=f'Grades of {grade}', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def perform_kruskal_wallis_marital_status_per_state(data, state, course, factor):
+    # data['TP_COR_RACA'] = data.TP_COR_RACA.apply(replace_ethnicity)
+
+    single = data[(data['TP_ESTADO_CIVIL'] == 'Single')]
+    married = data[(data['TP_ESTADO_CIVIL'] == 'Married')]
+    divorced = data[(data['TP_ESTADO_CIVIL'] == 'Divorced/Separated')]
+
+    return stats.kruskal(single[single['SG_UF_RESIDENCIA'] == state][course], 
+    married[married['SG_UF_RESIDENCIA'] == state][course], divorced[divorced['SG_UF_RESIDENCIA'] == state][course])
+
+
+def results_kruskal_wallis_marital_status_per_state(data, state, course, factor): 
+    print('results_kruskal_wallis_marital_status_per_state')
+    result = perform_kruskal_wallis_marital_status_per_state(data, state, course, factor)
+    print(result)
+    course_name = return_grade_name(course)
+
+    start = f'''Interpreting the results for the statiscal tests Kruskal-Wallis (comparing {course_name} for {factor} in {state}):\n 
+        We defined the following null hypothesis (H0) and alternative hypothesis (HA):\n
+            - H0: The median score in {course_name} is equal across all {factor} groups.\n
+            - HA: The median score in {course_name} is not equal across all {factor} groups.\n
+        (The test statistic is {result[0]} and the corresponding p-value is {result[1]}.)\n
+    '''
+
+    result_p = ""
+
+    if result[1] < 0.05:
+        result_p = f'''
+        We can reject the null hypothesis that the median score in {course_name} is the same for all five {factor} groups. 
+        We have sufficient evidence to conclude that the {factor} leads to 
+        statistically significant differences in median scores in {course_name} for the ENEM exam.
+        '''
+    else: 
+        result_p = f'''
+        We can accept the null hypothesis that the median score in {course_name} is the same for all five {factor} groups. 
+        We have sufficient evidence to conclude that the {factor} leads to 
+        no statistically significant differences in median scores in {course_name} for the ENEM exam.
+        '''
+    test_result= f'{start}{result_p}' 
+    st.text(test_result)
+
+def ploting_distribution_marital_status_per_state(data, state, course):
+    print('ploting_distribution_marital_status_per_state')
+
+    df = data[data['SG_UF_RESIDENCIA'] == state]
+
+    single = data[(data['TP_ESTADO_CIVIL'] == 'Single')]
+    married = data[(data['TP_ESTADO_CIVIL'] == 'Married')]
+    divorced = data[(data['TP_ESTADO_CIVIL'] == 'Divorced/Separated')]
+
+    colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a"]
+    fig = px.box(df, x=df[course])
+    fig = go.Figure()
+    fig.add_trace(go.histogram(y=single[course], name="Single", marker_color = '#fd7f6f'))
+    fig.add_trace(go.histogram(y=married[course], name="Married", marker_color = '#7eb0d5'))
+    fig.add_trace(go.histogram(y=divorced[course], name="Divorced", marker_color = '#b2e061'))
+    fig.update_layout(
+        title_text=f'{state} - Grades of {grade} in {year}', # title of plot
+        xaxis_title_text='Marital Status', # xaxis label
+        yaxis_title_text=f'Grades of {grade}', # yaxis label
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_distribution_kruskal_wallis_marital_status_per_state(data, state, course, factor):
+    print(state)
+    # ploting_distribution_race_per_state(data, state, course)
+    results_kruskal_wallis_marital_status_per_state(data, state, course, factor)
+    # perform_kruskal_wallis_per_state(data, state, course)
+
+def plot_distribution_kruskal_wallis_marital_status_all_states(data, states, course):
+    for state in states:
+        print(state)
+        plot_distribution_kruskal_wallis_marital_status_per_state(data, state, course)
+        # results_kruskal_wallis_per_state(data, state, course)
+
+def plot_statistical_tests_n_variables_marital_status_all_states(data, course):
+    states = list(data['SG_UF_RESIDENCIA'].unique())
+    plot_distribution_kruskal_wallis_marital_status_all_states(data, states, course)
+
+def plot_statistical_tests_n_variables_marital_status_per_state(data, brazilian_state, course):
+    print('plot_statistical_tests_n_variables_marital_status_per_state')
+    # df = transform_data_ethnicty(data)
+    if brazilian_state == 'ALL STATES':
+        plot_distribution_kruskal_wallis_marital_status_all_states(data, list(ddf['SG_UF_RESIDENCIA'].unique()), course)
+    else:
+        plot_distribution_kruskal_wallis_marital_status_per_state(data, brazilian_state, course)
+
+def plot_statistical_tests_n_variables_marital_status_per_state2(data, brazilian_state, course, factor):
+    data['TP_ESTADO_CIVIL'] = data.TP_ESTADO_CIVIL.apply(replace_status, meta=('TP_ESTADO_CIVIL', 'object'))
+    print('plot_statistical_tests_n_variables_marital_status_per_state2')
+    # df = transform_data_ethnicty(data)
+    if brazilian_state == 'ALL STATES':
+        plot_distribution_kruskal_wallis_marital_status_all_states(data, list(ddf['SG_UF_RESIDENCIA'].unique()), course, factors)
+    else:
+        plot_distribution_kruskal_wallis_marital_status_per_state(data, brazilian_state, course, factor)
+
+
+
 
 
 
@@ -842,7 +993,7 @@ def our_plot(params, ddf_par, st):
 
         if show_statistical_test:
             # graphEthnicity(ddf)
-            plot_statistical_tests_n_variables_per_state2(ddf, brazilian_state, grades_names_to_columns[grade], 'TP_ESTADO_CIVIL')
+            plot_statistical_tests_n_variables_marital_status_per_state2(ddf, brazilian_state, grades_names_to_columns[grade], 'TP_ESTADO_CIVIL')
             # ploting_boxplot_ethnicity_per_state(ddf, brazilian_state, grades_names_to_columns[grade])
 
 
